@@ -5,7 +5,7 @@
     # Route API requests to Laravel's index.php
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} ^/api/ [NC]
+    RewriteCond %{REQUEST_URI} /api/ [NC]
     RewriteRule ^(.*)$ index.php/$1 [L]
 
     # Prevent rewriting existing files or directories
