@@ -6,28 +6,28 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function login(Request )
+    public function login(Request $request)
     {
-        ->validate([
+        $request->validate([
             'username' => 'required',
             'password' => 'required'
         ]);
 
-         = User::with('division')->where('username', ->username)->first();
+        $user = User::with('division')->where('username', $request->username)->first();
 
-        if (! || !Hash::check(->password, ->password_hash)) {
+        if (!$user || !Hash::check($request->password, $user->password_hash)) {
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
 
-         = ->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'id' => ->id,
-            'username' => ->username,
-            'role' => ->role,
-            'division_id' => ->division_id,
-            'division_name' => ->division ? ->division->name : null,
-            'token' => ,
+            'id' => $user->id,
+            'username' => $user->username,
+            'role' => $user->role,
+            'division_id' => $user->division_id,
+            'division_name' => $user->division ? $user->division->name : null,
+            'token' => $token,
             'success' => true
         ]);
     }
