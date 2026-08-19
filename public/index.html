@@ -33,8 +33,8 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=6"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=6">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=7"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=7">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -375,7 +375,7 @@
             <input type="text" id="officer-input" placeholder="Enter officer name" />
           </div>
           
-          <button class="primary" id="confirm-serve">Call Next</button>
+          <button class="primary" id="confirm-serve" disabled style="opacity:0.5; cursor:not-allowed;">Call Next</button>
           <button class="close-btn" id="cancel-serve">Cancel</button>
         `;
         overlay.appendChild(modal);
@@ -389,14 +389,39 @@
           officers.forEach(o => {
             select.innerHTML += `<option value="${o.name}">${o.name}</option>`;
           });
+          validateBtn();
         }).catch(err => {
           document.getElementById('officer-select').innerHTML = '<option value="">Error loading</option>';
         });
         
+        const validateBtn = () => {
+          const isManual = document.getElementById('manual-toggle').checked;
+          const officerName = isManual 
+            ? document.getElementById('officer-input').value.trim() 
+            : document.getElementById('officer-select').value;
+          
+          const btn = document.getElementById('confirm-serve');
+          if (!officerName) {
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            btn.disabled = true;
+          } else {
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+            btn.disabled = false;
+          }
+        };
+
         document.getElementById('manual-toggle').onchange = (e) => {
           document.getElementById('dropdown-container').style.display = e.target.checked ? 'none' : 'block';
           document.getElementById('manual-container').style.display = e.target.checked ? 'block' : 'none';
+          validateBtn();
         };
+
+        document.getElementById('officer-select').onchange = validateBtn;
+        document.getElementById('officer-input').onkeyup = validateBtn;
+        // Initial check
+        setTimeout(validateBtn, 100);
         
         document.getElementById('cancel-serve').onclick = () => overlay.remove();
         
