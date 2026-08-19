@@ -33,8 +33,8 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=20"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=20">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=21"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=21">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -295,64 +295,96 @@
         }
       }, 300);
 
-      // TV Viewer auto-scaler: override viewport units and scale #root
-      (function() {
-        var DESIGN_WIDTH = 1920;
-        var DESIGN_HEIGHT = 1080;
-        var styleEl = null;
-
-        function applyTvScale() {
-          if (!window.location.pathname.includes('/tv/')) {
-            document.body.classList.remove('tv-scaled');
-            if (styleEl) { styleEl.remove(); styleEl = null; }
-            var root = document.getElementById('root');
-            if (root) {
-              root.style.transform = '';
-              root.style.transformOrigin = '';
-              root.style.width = '';
-              root.style.height = '';
-            }
-            return;
-          }
-
-          var actualWidth = window.innerWidth;
-          var actualHeight = window.innerHeight;
-          if (actualWidth >= DESIGN_WIDTH && actualHeight >= DESIGN_HEIGHT) {
-            document.body.classList.remove('tv-scaled');
-            if (styleEl) { styleEl.remove(); styleEl = null; }
-            return;
-          }
-
-          var scaleX = actualWidth / DESIGN_WIDTH;
-          var scaleY = actualHeight / DESIGN_HEIGHT;
-          var scale = Math.min(scaleX, scaleY);
-
-          // Inject CSS to override viewport units
-          if (!styleEl) {
-            styleEl = document.createElement('style');
-            document.head.appendChild(styleEl);
-          }
-          styleEl.textContent =
-            'body.tv-scaled .w-screen { width: ' + DESIGN_WIDTH + 'px !important; }' +
-            'body.tv-scaled .h-screen { height: ' + DESIGN_HEIGHT + 'px !important; }' +
-            'body.tv-scaled { overflow: hidden !important; width: ' + actualWidth + 'px !important; height: ' + actualHeight + 'px !important; }';
-
-          document.body.classList.add('tv-scaled');
-          var root = document.getElementById('root');
-          if (root) {
-            root.style.width = DESIGN_WIDTH + 'px';
-            root.style.height = DESIGN_HEIGHT + 'px';
-            root.style.transform = 'scale(' + scale + ')';
-            root.style.transformOrigin = 'top left';
-          }
-        }
-
-        window.addEventListener('load', applyTvScale);
-        window.addEventListener('resize', applyTvScale);
-        setInterval(applyTvScale, 1000);
-      })();
     </script>
 
+
+    <style>
+      /* --- TV Viewer Responsive --- */
+      @media (max-width: 1400px) {
+        /* Header bar */
+        [class*="w-screen"][class*="h-screen"] [class*="h-[72px]"] {
+          height: 50px !important;
+          padding-left: 1rem !important;
+          padding-right: 1rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] [class*="h-[72px]"] h1 {
+          font-size: 1.1rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] [class*="h-[72px]"] img {
+          height: 2rem !important;
+          width: 2rem !important;
+          margin-right: 0.75rem !important;
+        }
+        /* Section headings */
+        [class*="w-screen"][class*="h-screen"] .text-4xl {
+          font-size: 1.5rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .text-3xl {
+          font-size: 1.2rem !important;
+        }
+        /* Ticket cards - large (index 0) */
+        [class*="w-screen"][class*="h-screen"] .text-5xl,
+        [class*="w-screen"][class*="h-screen"] .md\\:text-5xl {
+          font-size: 2rem !important;
+        }
+        /* Ticket cards - small */
+        [class*="w-screen"][class*="h-screen"] .text-2xl {
+          font-size: 1.1rem !important;
+        }
+        /* Padding reductions */
+        [class*="w-screen"][class*="h-screen"] .p-6 {
+          padding: 0.75rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .p-4 {
+          padding: 0.5rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .p-3 {
+          padding: 0.4rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .mb-8 {
+          margin-bottom: 0.75rem !important;
+        }
+        /* Footer bar */
+        [class*="w-screen"][class*="h-screen"] [class*="shrink-0"][class*="border-gray-400"] {
+          padding-top: 0.25rem !important;
+          padding-bottom: 0.25rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .text-lg {
+          font-size: 0.85rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .text-xl {
+          font-size: 0.95rem !important;
+        }
+      }
+
+      @media (max-width: 1000px) {
+        [class*="w-screen"][class*="h-screen"] [class*="h-[72px]"] {
+          height: 40px !important;
+        }
+        [class*="w-screen"][class*="h-screen"] [class*="h-[72px]"] h1 {
+          font-size: 0.9rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .text-4xl {
+          font-size: 1.2rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .text-5xl,
+        [class*="w-screen"][class*="h-screen"] .md\\:text-5xl {
+          font-size: 1.5rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .text-2xl {
+          font-size: 0.95rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .text-xs {
+          font-size: 0.6rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .text-sm {
+          font-size: 0.7rem !important;
+        }
+        [class*="w-screen"][class*="h-screen"] .gap-4 {
+          gap: 0.5rem !important;
+        }
+      }
+    </style>
 
     <style>
       /* --- Missing Tailwind Utilities --- */
