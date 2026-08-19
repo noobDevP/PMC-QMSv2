@@ -33,8 +33,8 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=5"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=5">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=6"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=6">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -312,6 +312,7 @@
       }
       .officer-modal h2 { margin-top: 0; font-size: 1.5rem; color: #14242e; }
       .officer-modal p { color: #3d5a6b; margin-bottom: 1.5rem; }
+            .officer-modal input[type="checkbox"] { width: auto; margin: 0; }
       .officer-modal input, .officer-modal select {
         width: 100%; padding: 0.8rem 1rem; border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.9); background: rgba(255, 255, 255, 0.6);
@@ -345,21 +346,7 @@
       }
     </style>
     <script>
-      // Automatically add "Manage Officers" button on Teller Dashboard
-      setInterval(() => {
-        if (window.location.pathname.includes('/teller')) {
-          if (!document.getElementById('manage-officers-btn')) {
-            const btn = document.createElement('button');
-            btn.id = 'manage-officers-btn';
-            btn.innerHTML = '<i class="fas fa-users-cog"></i> Manage Officers';
-            btn.onclick = openManageOfficersModal;
-            document.body.appendChild(btn);
-          }
-        } else {
-          const btn = document.getElementById('manage-officers-btn');
-          if (btn) btn.remove();
-        }
-      }, 500);
+      
 
       // Global function intercepted by React to ask for serving officer
       window.openOfficerModal = function(ticketId, tellerId, divisionId, refreshQueueFn, axiosInst, apiUrl) {
@@ -395,7 +382,7 @@
         document.body.appendChild(overlay);
         
         // Fetch Officers
-        axiosInst.get(`${apiUrl}/teller/officers`).then(res => {
+        axiosInst.get(`${apiUrl}/officers`).then(res => {
           officers = res.data;
           const select = document.getElementById('officer-select');
           select.innerHTML = '<option value="">-- Select Officer --</option>';
