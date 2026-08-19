@@ -33,8 +33,8 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=7"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=7">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=8"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=8">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -362,16 +362,16 @@
           <p>Who is serving this ticket?</p>
           
           <label style="display:flex; align-items:center; gap:8px; margin-bottom:1rem; font-size:0.9rem; color:#3d5a6b;">
-            <input type="checkbox" id="manual-toggle"> Type name manually
+            <input type="checkbox" id="manual-toggle" checked> Type name manually
           </label>
           
-          <div id="dropdown-container">
+          <div id="dropdown-container" style="display:none;">
             <select id="officer-select">
               <option value="">Loading officers...</option>
             </select>
           </div>
           
-          <div id="manual-container" style="display:none;">
+          <div id="manual-container" style="display:block;">
             <input type="text" id="officer-input" placeholder="Enter officer name" />
           </div>
           
