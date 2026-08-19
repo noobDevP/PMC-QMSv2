@@ -12,11 +12,11 @@ class SettingsUpdated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public ;
+    public $data;
 
-    public function __construct( = [])
+    public function __construct($data = [])
     {
-        ->data = ;
+        $this->data = $data;
     }
 
     public function broadcastOn()
@@ -31,6 +31,6 @@ class SettingsUpdated implements ShouldBroadcastNow
 
     public function broadcastWith()
     {
-        return ->data;
+        return $this->data;
     }
 }

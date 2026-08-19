@@ -5,6 +5,32 @@
     <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PMC QMS</title>
+    <script>
+      // Socket.io to Laravel Echo adapter
+      window.io = function(url) {
+        console.log('Socket.io Adapter: Intercepted connection to', url);
+        const mockSocket = {
+          on: function(event, callback) {
+            console.log('Socket.io Adapter: Listening on event', event);
+            if (event === 'connect') {
+              setTimeout(callback, 100);
+            } else {
+              const listen = () => {
+                if (window.Echo) {
+                  const echoEvent = event.startsWith('.') ? event : '.' + event;
+                  window.Echo.channel('qms').listen(echoEvent, callback);
+                } else {
+                  setTimeout(listen, 100);
+                }
+              };
+              listen();
+            }
+            return mockSocket;
+          }
+        };
+        return mockSocket;
+      };
+    </script>
     <script type="module" crossorigin src="/assets/index-D0OUMhiw.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css">
   </head>

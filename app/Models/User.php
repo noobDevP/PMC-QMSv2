@@ -10,10 +10,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     
-    protected  = [];
+    protected $guarded = [];
 
     public function division()
     {
-        return ->belongsTo(Division::class);
+        return $this->belongsTo(Division::class);
     }
 }
