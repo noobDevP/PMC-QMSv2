@@ -33,8 +33,8 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=18"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=18">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=19"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=19">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -295,33 +295,30 @@
         }
       }, 300);
 
-      // TV Viewer auto-scaler: render at 1920px virtual width, scale to fit actual screen
+      // TV Viewer auto-scaler: use CSS zoom so viewport units (100vh) recalculate correctly
       (function() {
         var DESIGN_WIDTH = 1920;
         function applyTvScale() {
           if (!window.location.pathname.includes('/tv/')) return;
           var actualWidth = window.innerWidth;
-          if (actualWidth >= DESIGN_WIDTH) return; // no scaling needed
+          if (actualWidth >= DESIGN_WIDTH) {
+            document.body.style.zoom = '';
+            return;
+          }
           var scale = actualWidth / DESIGN_WIDTH;
-          document.documentElement.style.width = DESIGN_WIDTH + 'px';
-          document.documentElement.style.height = (window.innerHeight / scale) + 'px';
-          document.documentElement.style.transform = 'scale(' + scale + ')';
-          document.documentElement.style.transformOrigin = 'top left';
-          document.documentElement.style.overflow = 'hidden';
+          document.body.style.zoom = scale;
         }
-        // Apply on load, resize, and poll for SPA route changes
         window.addEventListener('load', applyTvScale);
-        window.addEventListener('resize', applyTvScale);
+        window.addEventListener('resize', function() {
+          // Reset zoom first so innerWidth reads the real viewport
+          document.body.style.zoom = '';
+          setTimeout(applyTvScale, 50);
+        });
         setInterval(function() {
           if (window.location.pathname.includes('/tv/')) {
-            applyTvScale();
+            if (!document.body.style.zoom) applyTvScale();
           } else {
-            // Reset if navigating away from TV
-            document.documentElement.style.width = '';
-            document.documentElement.style.height = '';
-            document.documentElement.style.transform = '';
-            document.documentElement.style.transformOrigin = '';
-            document.documentElement.style.overflow = '';
+            document.body.style.zoom = '';
           }
         }, 1000);
       })();
