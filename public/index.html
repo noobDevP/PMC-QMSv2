@@ -33,8 +33,8 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=4"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=4">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=5"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=5">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -294,6 +294,223 @@
           document.body.classList.remove('glass-mode');
         }
       }, 300);
+    </script>
+
+
+    <style>
+      /* --- Officer UI Styles --- */
+      .officer-modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px);
+        display: flex; justify-content: center; align-items: center; z-index: 9999;
+      }
+      .officer-modal {
+        background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 24px;
+        padding: 2rem; width: 90%; max-width: 450px; box-shadow: var(--shadow-soft);
+        font-family: var(--font-base);
+      }
+      .officer-modal h2 { margin-top: 0; font-size: 1.5rem; color: #14242e; }
+      .officer-modal p { color: #3d5a6b; margin-bottom: 1.5rem; }
+      .officer-modal input, .officer-modal select {
+        width: 100%; padding: 0.8rem 1rem; border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.9); background: rgba(255, 255, 255, 0.6);
+        margin-bottom: 1rem; box-sizing: border-box;
+      }
+      .officer-modal button.primary {
+        background: var(--btn-primary); color: white; width: 100%; padding: 0.8rem;
+        border-radius: 12px; border: none; font-weight: bold; cursor: pointer;
+      }
+      .officer-modal button.close-btn {
+        background: #e9ecef; color: #495057; width: 100%; padding: 0.8rem; margin-top: 0.5rem;
+        border-radius: 12px; border: none; font-weight: bold; cursor: pointer;
+      }
+      #manage-officers-btn {
+        position: fixed; bottom: 2rem; right: 2rem;
+        background: var(--btn-primary); color: white; padding: 1rem 1.5rem;
+        border-radius: 60px; border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15); cursor: pointer; z-index: 9998;
+        font-weight: 500; display: flex; align-items: center; gap: 8px;
+        transition: transform 0.2s;
+      }
+      #manage-officers-btn:hover { transform: scale(1.05); }
+      .officer-list-item {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 0.8rem; background: rgba(255,255,255,0.5); border-radius: 8px;
+        margin-bottom: 0.5rem; border: 1px solid rgba(255,255,255,0.5);
+      }
+      .officer-list-item button {
+        background: #dc3545; color: white; border: none; border-radius: 6px;
+        padding: 0.4rem 0.8rem; cursor: pointer; font-size: 0.8rem;
+      }
+    </style>
+    <script>
+      // Automatically add "Manage Officers" button on Teller Dashboard
+      setInterval(() => {
+        if (window.location.pathname.includes('/teller')) {
+          if (!document.getElementById('manage-officers-btn')) {
+            const btn = document.createElement('button');
+            btn.id = 'manage-officers-btn';
+            btn.innerHTML = '<i class="fas fa-users-cog"></i> Manage Officers';
+            btn.onclick = openManageOfficersModal;
+            document.body.appendChild(btn);
+          }
+        } else {
+          const btn = document.getElementById('manage-officers-btn');
+          if (btn) btn.remove();
+        }
+      }, 500);
+
+      // Global function intercepted by React to ask for serving officer
+      window.openOfficerModal = function(ticketId, tellerId, divisionId, refreshQueueFn, axiosInst, apiUrl) {
+        const overlay = document.createElement('div');
+        overlay.className = 'officer-modal-overlay';
+        
+        let officers = [];
+        
+        const modal = document.createElement('div');
+        modal.className = 'officer-modal';
+        modal.innerHTML = `
+          <h2>Serve Customer</h2>
+          <p>Who is serving this ticket?</p>
+          
+          <label style="display:flex; align-items:center; gap:8px; margin-bottom:1rem; font-size:0.9rem; color:#3d5a6b;">
+            <input type="checkbox" id="manual-toggle"> Type name manually
+          </label>
+          
+          <div id="dropdown-container">
+            <select id="officer-select">
+              <option value="">Loading officers...</option>
+            </select>
+          </div>
+          
+          <div id="manual-container" style="display:none;">
+            <input type="text" id="officer-input" placeholder="Enter officer name" />
+          </div>
+          
+          <button class="primary" id="confirm-serve">Call Next</button>
+          <button class="close-btn" id="cancel-serve">Cancel</button>
+        `;
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        // Fetch Officers
+        axiosInst.get(`${apiUrl}/teller/officers`).then(res => {
+          officers = res.data;
+          const select = document.getElementById('officer-select');
+          select.innerHTML = '<option value="">-- Select Officer --</option>';
+          officers.forEach(o => {
+            select.innerHTML += `<option value="${o.name}">${o.name}</option>`;
+          });
+        }).catch(err => {
+          document.getElementById('officer-select').innerHTML = '<option value="">Error loading</option>';
+        });
+        
+        document.getElementById('manual-toggle').onchange = (e) => {
+          document.getElementById('dropdown-container').style.display = e.target.checked ? 'none' : 'block';
+          document.getElementById('manual-container').style.display = e.target.checked ? 'block' : 'none';
+        };
+        
+        document.getElementById('cancel-serve').onclick = () => overlay.remove();
+        
+        document.getElementById('confirm-serve').onclick = async () => {
+          const isManual = document.getElementById('manual-toggle').checked;
+          const officerName = isManual 
+            ? document.getElementById('officer-input').value.trim() 
+            : document.getElementById('officer-select').value;
+            
+          document.getElementById('confirm-serve').innerText = 'Calling...';
+          document.getElementById('confirm-serve').disabled = true;
+          
+          try {
+            await axiosInst.post(`${apiUrl}/ticket/${ticketId}/accept`, {
+              teller_id: tellerId,
+              served_by: officerName || null
+            });
+            refreshQueueFn(divisionId);
+            overlay.remove();
+          } catch (err) {
+            alert('Error accepting ticket.');
+            overlay.remove();
+          }
+        };
+      };
+
+      // Function to open Manage Officers Modal
+      function openManageOfficersModal() {
+        const overlay = document.createElement('div');
+        overlay.className = 'officer-modal-overlay';
+        
+        const modal = document.createElement('div');
+        modal.className = 'officer-modal';
+        modal.innerHTML = `
+          <h2>Manage Officers</h2>
+          <p>Add or remove officers available for the dropdown.</p>
+          
+          <div style="display:flex; gap:8px; margin-bottom:1rem;">
+            <input type="text" id="new-officer-name" placeholder="New Officer Name" style="margin-bottom:0;" />
+            <button id="add-officer-btn" style="background:var(--btn-primary); color:white; border:none; border-radius:12px; padding:0 1rem; cursor:pointer;">Add</button>
+          </div>
+          
+          <div id="officer-list" style="max-height: 200px; overflow-y:auto; margin-bottom:1rem;">
+            <div style="text-align:center; padding:1rem; color:#666;">Loading...</div>
+          </div>
+          
+          <button class="close-btn" id="close-manage">Close</button>
+        `;
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        // Simple fetch using localStorage token
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = user ? user.token : '';
+        const apiUrl = window.location.origin + '/api';
+        
+        const loadOfficers = () => {
+          fetch(`${apiUrl}/teller/officers`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+          .then(r => r.json())
+          .then(data => {
+            const list = document.getElementById('officer-list');
+            list.innerHTML = '';
+            if (data.length === 0) list.innerHTML = '<div style="text-align:center; color:#666; font-size:0.9rem;">No officers added.</div>';
+            data.forEach(o => {
+              const div = document.createElement('div');
+              div.className = 'officer-list-item';
+              div.innerHTML = `<span>${o.name}</span> <button onclick="deleteOfficer(${o.id})">Delete</button>`;
+              list.appendChild(div);
+            });
+          });
+        };
+        
+        window.deleteOfficer = (id) => {
+          if (!confirm('Delete this officer?')) return;
+          fetch(`${apiUrl}/teller/officers/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          }).then(() => loadOfficers());
+        };
+        
+        document.getElementById('add-officer-btn').onclick = () => {
+          const name = document.getElementById('new-officer-name').value.trim();
+          if (!name) return;
+          document.getElementById('add-officer-btn').innerText = '...';
+          fetch(`${apiUrl}/teller/officers`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
+          }).then(() => {
+            document.getElementById('new-officer-name').value = '';
+            document.getElementById('add-officer-btn').innerText = 'Add';
+            loadOfficers();
+          });
+        };
+        
+        document.getElementById('close-manage').onclick = () => overlay.remove();
+        
+        loadOfficers();
+      }
     </script>
 
   </head>
