@@ -31,8 +31,8 @@
         return mockSocket;
       };
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=2"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=2">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=3"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -240,7 +240,60 @@
           height: 40px;
         }
       }
+
+      /* --- Admin & Teller Glassmorphism Overrides --- */
+      body.glass-mode {
+        background: var(--bg-page) !important;
+        font-family: var(--font-base);
+        min-height: 100vh;
+      }
+      .glass-mode .min-h-screen, .glass-mode .bg-gray-100, .glass-mode .bg-gray-50 {
+        background: transparent !important;
+      }
+      .glass-mode .bg-white {
+        background: var(--bg-card) !important;
+        backdrop-filter: blur(18px) saturate(180%);
+        -webkit-backdrop-filter: blur(18px) saturate(180%);
+        border-radius: 24px !important;
+        border: 1px solid var(--border-color) !important;
+        box-shadow: var(--shadow-soft) !important;
+        transition: all 0.3s ease;
+      }
+      /* Optional: Make inputs glassmorphic too */
+      .glass-mode input, .glass-mode select {
+        background: var(--bg-input) !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(255, 255, 255, 0.9) !important;
+      }
+      .glass-mode input:focus, .glass-mode select:focus {
+        background: #ffffff !important;
+        border-color: #a0bccf !important;
+        box-shadow: 0 8px 18px -8px rgba(30, 60, 90, 0.08) !important;
+      }
+      /* Optional: Make primary buttons match the login button */
+      .glass-mode .bg-blue-600, .glass-mode .bg-blue-500, .glass-mode .bg-green-600, .glass-mode .bg-indigo-600 {
+        background: var(--btn-primary) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 60px !important;
+        box-shadow: 0 12px 24px -12px rgba(20, 40, 60, 0.25) !important;
+        color: white !important;
+      }
+      .glass-mode .bg-blue-600:hover, .glass-mode .bg-blue-500:hover, .glass-mode .bg-green-600:hover, .glass-mode .bg-indigo-600:hover {
+        background: var(--btn-primary-hover) !important;
+        transform: scale(1.02);
+      }
     </style>
+    <script>
+      // Automatically apply glass-mode to body if on Admin or Teller routes
+      setInterval(() => {
+        if (window.location.pathname.includes('/admin') || window.location.pathname.includes('/teller')) {
+          document.body.classList.add('glass-mode');
+        } else {
+          document.body.classList.remove('glass-mode');
+        }
+      }, 300);
+    </script>
+
   </head>
   <body>
     <div id="root"></div>
