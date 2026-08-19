@@ -33,6 +33,214 @@
     </script>
     <script type="module" crossorigin src="/assets/index-D0OUMhiw.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+      /* --- Design Tokens --- */
+      :root {
+        --bg-page: linear-gradient(145deg, #f6f9fc 0%, #e9f0f5 100%);
+        --bg-card: rgba(255, 255, 255, 0.5);
+        --bg-input: rgba(255, 255, 255, 0.6);
+        
+        --text-main: #14242e;
+        --text-muted: #3d5a6b;
+        --text-light: #9bb3c4;
+        
+        --btn-primary: #203d52;
+        --btn-primary-hover: #0e212e;
+        
+        --border-color: rgba(255, 255, 255, 0.6);
+        --shadow-soft: 0 20px 40px rgba(0, 20, 30, 0.08), 0 8px 20px rgba(0, 0, 0, 0.02);
+        
+        --font-base: 'Inter', sans-serif;
+      }
+
+      /* --- Reset & Base --- */
+      .login-container ::selection {
+        background: #b3cddf;
+        color: #0f212f;
+      }
+
+      /* --- Layout & Card --- */
+      .login-container {
+        font-family: var(--font-base);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-page);
+        padding: 1.5rem;
+        width: 100%;
+      }
+
+      .login-wrapper {
+        background: var(--bg-card);
+        backdrop-filter: blur(18px) saturate(180%);
+        -webkit-backdrop-filter: blur(18px) saturate(180%);
+        border-radius: 48px;
+        box-shadow: var(--shadow-soft);
+        padding: 3rem 2.5rem;
+        width: 100%;
+        max-width: 480px;
+        border: 1px solid var(--border-color);
+        transition: padding 0.3s ease;
+      }
+
+      /* --- Branding --- */
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 2.2rem;
+      }
+
+      .brand-logo {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.4);
+        padding: 4px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      }
+
+      .brand h1 {
+        font-weight: 500;
+        font-size: 1.6rem;
+        letter-spacing: -0.02em;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+      }
+
+      .brand-subtitle {
+        font-weight: 300;
+        color: #2b4b62;
+      }
+
+      /* --- Form Elements --- */
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #2d4455;
+        margin-bottom: 0.5rem;
+        opacity: 0.8;
+      }
+
+      .input-wrap {
+        display: flex;
+        align-items: center;
+        background: var(--bg-input);
+        border-radius: 60px;
+        padding: 0 1.2rem;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        transition: all 0.2s ease;
+        width: 100%;
+      }
+
+      .input-wrap:focus-within {
+        background: #ffffff;
+        border-color: #a0bccf;
+        box-shadow: 0 8px 18px -8px rgba(30, 60, 90, 0.08);
+      }
+
+      .input-wrap i {
+        color: #55758a;
+        font-size: 1rem;
+        opacity: 0.6;
+        margin-right: 12px;
+      }
+
+      .input-wrap input {
+        width: 100%;
+        border: none;
+        background: transparent;
+        padding: 1rem 0;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        outline: none;
+        font-family: var(--font-base);
+      }
+
+      .input-wrap input::placeholder {
+        color: var(--text-light);
+        font-weight: 300;
+      }
+
+      /* --- Button --- */
+      .login-btn {
+        width: 100%;
+        background: var(--btn-primary);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 60px;
+        font-weight: 500;
+        font-size: 1rem;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        font-family: var(--font-base);
+        letter-spacing: -0.01em;
+        box-shadow: 0 12px 24px -12px rgba(20, 40, 60, 0.25);
+        margin-top: 2rem;
+      }
+
+      .login-btn:hover {
+        background: var(--btn-primary-hover);
+        transform: scale(1.01);
+        box-shadow: 0 16px 32px -14px rgba(10, 30, 50, 0.3);
+      }
+
+      .login-btn:active {
+        transform: scale(0.98);
+      }
+
+      /* --- Footer --- */
+      .footer-note {
+        margin-top: 2.5rem;
+        font-size: 0.75rem;
+        color: #6f8fa3;
+        text-align: center;
+        opacity: 0.6;
+        letter-spacing: 0.03em;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        padding-top: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      /* --- Responsive --- */
+      @media (max-width: 500px) {
+        .login-wrapper {
+          padding: 2rem 1.5rem;
+          border-radius: 32px;
+        }
+        .brand h1 {
+          font-size: 1.3rem;
+        }
+        .brand-logo {
+          width: 40px;
+          height: 40px;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

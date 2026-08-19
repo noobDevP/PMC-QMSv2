@@ -39,6 +39,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/teller/ticket/{id}/complete', [TellerController::class, 'completeTicket']);
     Route::get('/teller/export/{divisionId}', [TellerController::class, 'exportTickets']);
     Route::post('/teller/ticket/{id}/reroute', [TellerController::class, 'rerouteTicket']);
+
+    // Officer management routes
+    Route::get('/teller/officers', [TellerController::class, 'getOfficers']);
+    Route::post('/teller/officers', [TellerController::class, 'createOfficer']);
+    Route::delete('/teller/officers/{id}', [TellerController::class, 'deleteOfficer']);
 });
 
 // Kiosk Routes (Public)

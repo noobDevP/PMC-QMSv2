@@ -31,7 +31,8 @@ class TvController extends Controller
                 'customer_type' => $t->customer_type,
                 'customer_name' => $t->customer_name,
                 'purpose' => $t->purpose ? $t->purpose->name : '',
-                'division_name' => $t->division ? $t->division->name : ''
+                'division_name' => $t->division ? $t->division->name : '',
+                'served_by' => $t->served_by
             ];
             if ($t->status === 'IN_QUEUE') {
                 $in_queue[] = $data;

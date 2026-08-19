@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Models\Ticket;
 use App\Models\Purpose;
 use App\Models\Division;
+use App\Models\Officer;
 use Carbon\Carbon;
 
 class TellerController extends Controller
@@ -40,11 +41,23 @@ class TellerController extends Controller
         $ticket->update([
             'status' => 'SERVING',
             'served_at' => now(),
-            'teller_id' => $request->input('teller_id', auth()->id())
+            'teller_id' => $request->input('teller_id', auth()->id()),
+            'served_by' => $request->input('served_by')
         ]);
         
         // TODO: Generate TTS URL or let frontend handle it
-        event(new \App\Events\TicketServing(['id' => $ticket->id, 'ticket_number' => $ticket->ticket_number, 'division_name' => $ticket->division->name ?? '', 'customer_type' => $ticket->customer_type, 'customer_name' => $ticket->customer_name, 'purpose' => $ticket->purpose->name ?? '', 'additional_info' => $ticket->additional_info, 'tv_id' => $ticket->division->tv_id ?? 1, 'audio_url' => '']));
+        event(new \App\Events\TicketServing([
+            'id' => $ticket->id,
+            'ticket_number' => $ticket->ticket_number,
+            'division_name' => $ticket->division->name ?? '',
+            'customer_type' => $ticket->customer_type,
+            'customer_name' => $ticket->customer_name,
+            'purpose' => $ticket->purpose->name ?? '',
+            'additional_info' => $ticket->additional_info,
+            'tv_id' => $ticket->division->tv_id ?? 1,
+            'served_by' => $ticket->served_by,
+            'audio_url' => ''
+        ]));
         return response()->json(['success' => true]);
     }
 
@@ -81,6 +94,29 @@ class TellerController extends Controller
         return response($csv)
             ->header('Content-Type', 'text/csv')
             ->header('Content-Disposition', 'attachment; filename="teller_tickets.csv"');
+    }
+
+    public function getOfficers() {
+        return response()->json(Officer::where('user_id', auth()->id())->get());
+    }
+
+    public function createOfficer(Request $request) {
+        $request->validate([
+            'name' => 'required|string|max:100'
+        ]);
+
+        $officer = Officer::create([
+            'name' => $request->name,
+            'user_id' => auth()->id()
+        ]);
+
+        return response()->json(['success' => true, 'id' => $officer->id]);
+    }
+
+    public function deleteOfficer($id) {
+        $officer = Officer::where('user_id', auth()->id())->findOrFail($id);
+        $officer->delete();
+        return response()->json(['success' => true]);
     }
 }
 
