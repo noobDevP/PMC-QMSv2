@@ -33,8 +33,8 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=16"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=16">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=17"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=17">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -555,6 +555,116 @@
         } catch(e) {}
       };
     </script>
+
+    <style>
+      /* --- Kiosk Mobile Responsive --- */
+      @media (max-width: 768px) {
+        /* Idle screen */
+        [class*="min-h-screen"][class*="cursor-pointer"] .text-7xl {
+          font-size: 2.5rem !important;
+        }
+        [class*="min-h-screen"][class*="cursor-pointer"] .text-3xl {
+          font-size: 1.1rem !important;
+        }
+        [class*="min-h-screen"][class*="cursor-pointer"] .h-40 {
+          height: 5rem !important;
+          width: 5rem !important;
+        }
+        [class*="min-h-screen"][class*="cursor-pointer"] .-mt-48 {
+          margin-top: -4rem !important;
+        }
+        [class*="min-h-screen"][class*="cursor-pointer"] .p-8 {
+          padding: 1rem !important;
+        }
+
+        /* Form screen */
+        [class*="min-h-screen"][class*="p-8"][class*="flex-col"] {
+          padding: 1rem !important;
+        }
+        [class*="min-h-screen"] .text-5xl {
+          font-size: 1.8rem !important;
+        }
+        [class*="min-h-screen"] .max-w-3xl {
+          max-width: 100% !important;
+        }
+        [class*="min-h-screen"] .text-xl {
+          font-size: 1rem !important;
+        }
+        [class*="min-h-screen"] .text-2xl {
+          font-size: 1.25rem !important;
+        }
+        [class*="min-h-screen"] .mb-10 {
+          margin-bottom: 1.5rem !important;
+        }
+        [class*="min-h-screen"] .h-20 {
+          height: 3rem !important;
+          width: 3rem !important;
+        }
+        [class*="min-h-screen"] .p-8 {
+          padding: 1.25rem !important;
+        }
+        [class*="min-h-screen"] .gap-8 {
+          gap: 1.25rem !important;
+        }
+        [class*="min-h-screen"] .p-6 {
+          padding: 0.75rem !important;
+        }
+        [class*="min-h-screen"] .p-4 {
+          padding: 0.75rem !important;
+        }
+        [class*="min-h-screen"] .py-6 {
+          padding-top: 1rem !important;
+          padding-bottom: 1rem !important;
+        }
+        [class*="min-h-screen"] .text-lg {
+          font-size: 0.9rem !important;
+        }
+        [class*="min-h-screen"] .mb-4 {
+          margin-bottom: 0.5rem !important;
+        }
+
+        /* Personnel type grid: 3 cols still but smaller */
+        [class*="min-h-screen"] .grid-cols-3 {
+          grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+          gap: 0.5rem !important;
+        }
+        [class*="min-h-screen"] .grid-cols-3 button {
+          padding: 0.75rem 0.25rem !important;
+          font-size: 0.8rem !important;
+        }
+
+        /* Get Ticket button */
+        [class*="min-h-screen"] .text-2xl.tracking-widest {
+          font-size: 1.1rem !important;
+        }
+
+        /* Purpose modal fullscreen */
+        [class*="min-h-screen"] .max-w-7xl {
+          max-width: 100% !important;
+          border-radius: 0 !important;
+        }
+
+        /* Ticket confirmation screen */
+        [class*="min-h-screen"][class*="bg-blue-600"] .text-6xl {
+          font-size: 3rem !important;
+        }
+        [class*="min-h-screen"][class*="bg-blue-600"] .max-w-md {
+          max-width: 95% !important;
+        }
+        [class*="min-h-screen"][class*="bg-blue-600"] .p-10 {
+          padding: 1.5rem !important;
+        }
+      }
+
+      @media (max-width: 400px) {
+        [class*="min-h-screen"][class*="cursor-pointer"] .text-7xl {
+          font-size: 2rem !important;
+        }
+        [class*="min-h-screen"] .grid-cols-3 {
+          grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        }
+      }
+    </style>
 </head>
   <body>
     <div id="root"></div>
