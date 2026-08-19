@@ -26,6 +26,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/export', [AdminController::class, 'exportTickets']);
     Route::delete('/admin/resolved', [AdminController::class, 'deleteResolved']);
 
+    // User/Teller management routes
+    Route::get('/auth/users', [AuthController::class, 'getUsers']);
+    Route::post('/auth/users', [AuthController::class, 'createUser']);
+    Route::delete('/auth/users/{id}', [AuthController::class, 'deleteUser']);
+    Route::post('/auth/users/{id}/reset', [AuthController::class, 'resetPassword']);
+
     // Teller Routes
     Route::get('/teller/queue/{division_id}', [TellerController::class, 'getQueue']);
     Route::get('/teller/purposes', [TellerController::class, 'getPurposes']);
