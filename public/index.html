@@ -33,8 +33,8 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=26"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=26">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=27"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=27">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -759,6 +759,46 @@
         }
       }
     </style>
+
+    <script>
+      // Hide partially shown tickets in TV viewer
+      (function() {
+        let observer = null;
+        
+        function setupObserver() {
+          if (!window.location.pathname.includes('/tv/')) return;
+          
+          if (!observer) {
+            observer = new IntersectionObserver((entries) => {
+              entries.forEach(entry => {
+                // If the ticket is not fully visible, hide it using opacity so it still takes up space
+                // and can be observed accurately.
+                if (entry.intersectionRatio < 0.99) {
+                  entry.target.style.opacity = '0';
+                } else {
+                  entry.target.style.opacity = '1';
+                }
+              });
+            }, {
+              root: null,
+              threshold: [0, 0.1, 0.5, 0.9, 0.99, 1.0]
+            });
+          }
+
+          // Find all tickets and observe them
+          const tickets = document.querySelectorAll('.rounded-xl, .relative.rounded-lg');
+          tickets.forEach(t => {
+            if (!t.dataset.observed) {
+              observer.observe(t);
+              t.dataset.observed = 'true';
+              t.style.transition = 'opacity 0.2s ease-in-out';
+            }
+          });
+        }
+
+        setInterval(setupObserver, 1000);
+      })();
+    </script>
 </head>
   <body>
     <div id="root"></div>
