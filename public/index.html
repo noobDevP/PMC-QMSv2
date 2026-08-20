@@ -33,8 +33,8 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=40"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=40">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=41"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=41">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -799,6 +799,30 @@
 
         setInterval(setupObserver, 1000);
       })();
+    </script>
+
+    <script>
+      window._cachedVoices = [];
+      window._loadVoices = () => {
+          if ('speechSynthesis' in window) {
+              window._cachedVoices = window.speechSynthesis.getVoices();
+          }
+      };
+      window._loadVoices();
+      if ('speechSynthesis' in window) {
+          window.speechSynthesis.onvoiceschanged = window._loadVoices;
+      }
+      window.getSystemVoice = () => {
+          if (!window._cachedVoices || window._cachedVoices.length === 0) window._loadVoices();
+          let defaultVoice = window._cachedVoices.find(v => v.default);
+          if (defaultVoice) return defaultVoice;
+          const userLang = navigator.language || 'en-US';
+          let langVoice = window._cachedVoices.find(v => v.lang === userLang);
+          if (langVoice) return langVoice;
+          let baseLangVoice = window._cachedVoices.find(v => v.lang && v.lang.startsWith(userLang.slice(0, 2)));
+          if (baseLangVoice) return baseLangVoice;
+          return null;
+      };
     </script>
 </head>
   <body>
