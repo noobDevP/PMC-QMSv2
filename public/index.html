@@ -33,8 +33,8 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=33"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=33">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=34"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=34">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -803,34 +803,6 @@
   <body>
     <div id="root"></div>
   
-    <!-- Audio Autoplay Unlock Overlay -->
-    <script>
-      (function() {
-        if (!window.location.pathname.includes('/tv/')) return;
-        
-        window.addEventListener('DOMContentLoaded', () => {
-          const overlay = document.createElement('div');
-          overlay.id = 'audio-unlock-overlay';
-          overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);color:white;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;z-index:999999;cursor:pointer;flex-direction:column;';
-          overlay.innerHTML = '<span>🔊 Click Anywhere to Enable Audio & TTS</span><span style="font-size:1rem;margin-top:1rem;font-weight:normal;">Browsers require user interaction before playing sound</span>';
-          
-          document.body.appendChild(overlay);
-          
-          overlay.addEventListener('click', () => {
-            // Play and immediately pause a silent audio to unlock AudioContext/WebSpeech
-            const silentAudio = new Audio();
-            silentAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-            silentAudio.play().catch(e => console.log('Silent audio play failed', e));
-            
-            // Speak an empty string to unlock SpeechSynthesis
-            const utterance = new SpeechSynthesisUtterance('');
-            window.speechSynthesis.speak(utterance);
-            
-            overlay.remove();
-          });
-        });
-      })();
-    </script>
     
 </body>
 </html>
