@@ -23,7 +23,7 @@ class AdminController extends Controller
         $setting->update($request->only([
             'tv_idle_seconds', 'shrink_timeout', 'collapse_timeout', 
             'periodic_return_timer', 'periodic_return_mode', 'ads_interval', 
-            'announcement', 'media_mode', 'youtube_id'
+            'announcement', 'media_mode', 'youtube_id', 'facebook_url'
         ]));
         event(new \App\Events\SettingsUpdated($setting->toArray()));
         return response()->json(['success' => true]);
