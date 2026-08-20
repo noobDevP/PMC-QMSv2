@@ -33,8 +33,8 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=43"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=43">
+    <script type="module" crossorigin src="/assets/index-D0OUMhiw.js?v=44"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CrLUnPlb.css?v=44">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -822,6 +822,21 @@
           let baseLangVoice = window._cachedVoices.find(v => v.lang && v.lang.startsWith(userLang.slice(0, 2)));
           if (baseLangVoice) return baseLangVoice;
           return null;
+      };
+    </script>
+
+    <script>
+      // Global bridge for native Android TV App
+      window.onNativeTtsEnd = () => {
+          if (window.unmuteMedia) window.unmuteMedia();
+          // We don't have direct access to E.current from here easily, but the watchdog or the callback 
+          // can be dispatched as a custom event.
+          // Wait, E.current is local to the React component! 
+          window.dispatchEvent(new Event('nativeTtsEnd'));
+      };
+      window.onNativeTtsError = () => {
+          console.error("Native Android TTS Error");
+          window.dispatchEvent(new Event('nativeTtsEnd'));
       };
     </script>
 </head>
