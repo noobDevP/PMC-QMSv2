@@ -1,17 +1,8 @@
 <IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteBase /
-
-    # Route API requests to Laravel's index.php
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} /api/ [NC]
-    RewriteRule ^(.*)$ index.php/$1 [L]
-
-    # Prevent rewriting existing files or directories
-    RewriteRule ^index\.html$ - [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule . /index.html [L]
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
 </IfModule>
-
