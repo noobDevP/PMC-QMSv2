@@ -26,7 +26,8 @@
               listen();
             }
             return mockSocket;
-          }
+          },
+          disconnect: function() { console.log('Socket.io Adapter: Disconnect called'); }
         };
         return mockSocket;
       };
@@ -575,7 +576,7 @@
           fetch(`${apiUrl}/teller/officers`, {
             headers: { 'Authorization': `Bearer ${token}` }
           })
-          .then(r => r.js?v=1787535013on())
+          .then(r => r.json())
           .then(data => {
             const list = document.getElementById('officer-list');
             list.innerHTML = '';
