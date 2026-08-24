@@ -626,14 +626,7 @@
       window.muteMedia = () => {
           try {
             let iframe = document.querySelector('iframe');
-            if (iframe) {
-                if (iframe.src.includes('facebook.com')) {
-                    iframe.dataset.originalSrc = iframe.src;
-                    iframe.src = '';
-                } else {
-                    iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":[]}', '*');
-                }
-            }
+            if (iframe) iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":[]}', '*');
             let video = document.querySelector('video');
             if (video) {
               window._wasVideoMuted = video.muted;
@@ -645,14 +638,7 @@
           if (window._isTvFullScreen) return;
           try {
             let iframe = document.querySelector('iframe');
-            if (iframe) {
-                if (iframe.dataset.originalSrc) {
-                    iframe.src = iframe.dataset.originalSrc;
-                    iframe.dataset.originalSrc = '';
-                } else {
-                    iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":[]}', '*');
-                }
-            }
+            if (iframe) iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":[]}', '*');
             let video = document.querySelector('video');
             if (video && !window._wasVideoMuted) {
               video.muted = false;
