@@ -54,3 +54,12 @@ Route::post('/kiosk/ticket/{id}/cancel', [KioskController::class, 'cancelTicket'
 
 // TV Viewer Routes (Public)
 Route::get('/tv/state/{tv_id}', [TvController::class, 'getState']);
+
+Route::get('/setup-db-migrate', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        return "Migrations ran successfully. Output: " . \Illuminate\Support\Facades\Artisan::output();
+    } catch (\Exception $e) {
+        return "Error running migrations: " . $e->getMessage();
+    }
+});
