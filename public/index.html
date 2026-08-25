@@ -626,51 +626,8 @@
         window._activeFbPlayer = null;
         window._isMutedByTTS = false;
 
-        window.fbAsyncInit = function() {
-          FB.init({
-            xfbml      : false,
-            version    : 'v19.0'
-          });
-          FB.Event.subscribe('xfbml.ready', function(msg) {
-            if (msg.type === 'video') {
-              window._activeFbPlayer = msg.instance;
-              if (window._isMutedByTTS) {
-                window._activeFbPlayer.mute();
-              }
-            }
-          });
-        };
-
-        window.muteMedia = () => {
-          window._isMutedByTTS = true;
-          try {
-            if (window._activeFbPlayer) {
-              window._activeFbPlayer.mute();
-            }
-            let iframe = document.querySelector('iframe');
-            if (iframe && !iframe.src.includes('facebook.com')) iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":[]}', '*');
-            let video = document.querySelector('video');
-            if (video) {
-              window._wasVideoMuted = video.muted;
-              video.muted = true;
-            }
-          } catch(e) {}
-        };
-        window.unmuteMedia = () => {
-          window._isMutedByTTS = false;
-          if (window._isTvFullScreen) return;
-          try {
-            if (window._activeFbPlayer) {
-              window._activeFbPlayer.unmute();
-            }
-            let iframe = document.querySelector('iframe');
-            if (iframe && !iframe.src.includes('facebook.com')) iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":[]}', '*');
-            let video = document.querySelector('video');
-            if (video && !window._wasVideoMuted) {
-              video.muted = false;
-            }
-          } catch(e) {}
-        };
+                window.muteMedia = () => {};
+        window.unmuteMedia = () => {};
     </script>
 
     <style>
