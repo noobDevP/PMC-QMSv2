@@ -36,6 +36,7 @@ class TellerController extends Controller
                     'customer_type' => $t->customer_type,
                     'customer_name' => $t->customer_name,
                     'purpose' => $t->purpose ? $t->purpose->name : '',
+                    'additional_info' => $t->additional_info,
                     'status' => $t->status,
                     'created_at' => $t->created_at->toIso8601String()
                 ];
@@ -131,12 +132,20 @@ class TellerController extends Controller
 
     public function rerouteTicket(Request $request, $id) {
         $ticket = Ticket::findOrFail($id);
+        
+        $new_info = $ticket->additional_info;
+        if (!str_contains((string)$new_info, '(Rerouted)')) {
+            $new_info = $new_info ? $new_info . ' (Rerouted)' : '(Rerouted)';
+        }
+
         $ticket->update([
             'division_id' => $request->target_division_id,
             'purpose_id' => $request->target_purpose_id,
             'status' => 'IN_QUEUE',
             'served_at' => null,
-            'teller_id' => null
+            'teller_id' => null,
+            'served_by' => null,
+            'additional_info' => $new_info
         ]);
         event(new \App\Events\TicketCancelled(['id' => $ticket->id, 'tv_id' => $ticket->division->tv_id ?? 1])); event(new \App\Events\TicketCreated(['tv_id' => \App\Models\Division::find($request->target_division_id)->tv_id ?? 1]));
         return response()->json(['success' => true]);
