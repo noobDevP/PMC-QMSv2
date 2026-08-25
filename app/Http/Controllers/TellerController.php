@@ -44,9 +44,53 @@ class TellerController extends Controller
     }
 
     public function getPurposes(Request $request) {
-        $div_id = $request->query('division_id');
-        if (!$div_id) return response()->json([]);
-        return response()->json(Purpose::where('division_id', $div_id)->get(['id', 'name']));
+        $assignedDivisions = \App\Models\Division::where('teller_id', auth()->id())->pluck('id')->toArray();
+        $primaryDivision = auth()->user()->division_id;
+        if ($primaryDivision && !in_array($primaryDivision, $assignedDivisions)) {
+            $assignedDivisions[] = $primaryDivision;
+        }
+        $jsonDivisions = json_decode(auth()->user()->division_id, true);
+        if (is_array($jsonDivisions)) {
+            $assignedDivisions = array_unique(array_merge($assignedDivisions, $jsonDivisions));
+        }
+        
+        // Fetch purposes and join division name so UI can distinguish them
+        $purposes = Purpose::whereIn('division_id', empty($assignedDivisions) ? [$request->query('division_id')] : $assignedDivisions)
+            ->join('divisions', 'purposes.division_id', '=', 'divisions.id')
+            ->select('purposes.id', 'purposes.name', 'divisions.name as division_name', 'purposes.division_id')
+            ->get();
+            
+        return response()->json($purposes);
+    }
+
+    public function createPurpose(Request $request) {
+        $assignedDivisions = \App\Models\Division::where('teller_id', auth()->id())->pluck('id')->toArray();
+        $primaryDivision = auth()->user()->division_id;
+        if ($primaryDivision && !in_array($primaryDivision, $assignedDivisions)) {
+            $assignedDivisions[] = $primaryDivision;
+        }
+        $jsonDivisions = json_decode(auth()->user()->division_id, true);
+        if (is_array($jsonDivisions)) {
+            $assignedDivisions = array_unique(array_merge($assignedDivisions, $jsonDivisions));
+        }
+        
+        $divs = empty($assignedDivisions) ? [$request->input('division_id')] : $assignedDivisions;
+        $lastId = null;
+        foreach ($divs as $d) {
+            $p = Purpose::create(['name' => $request->input('name'), 'division_id' => $d]);
+            $lastId = $p->id;
+        }
+        
+        return response()->json(['success' => true, 'id' => $lastId]);
+    }
+
+    public function deletePurpose($id) {
+        try {
+            Purpose::findOrFail($id)->delete();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Cannot delete purpose because it is linked to existing tickets.'], 400);
+        }
     }
 
     public function acceptTicket(Request $request, $id) {

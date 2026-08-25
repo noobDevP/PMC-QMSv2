@@ -35,6 +35,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Teller Routes
     Route::get('/teller/queue/{division_id}', [TellerController::class, 'getQueue']);
     Route::get('/teller/purposes', [TellerController::class, 'getPurposes']);
+    Route::post('/teller/purposes', [TellerController::class, 'createPurpose']);
+    Route::delete('/teller/purposes/{id}', [TellerController::class, 'deletePurpose']);
     Route::post('/teller/ticket/{id}/accept', [TellerController::class, 'acceptTicket']);
     Route::post('/teller/ticket/{id}/complete', [TellerController::class, 'completeTicket']);
     Route::get('/teller/export/{divisionId}', [TellerController::class, 'exportTickets']);
