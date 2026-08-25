@@ -42,15 +42,21 @@ class AuthController extends Controller
         $request->validate([
             'username' => 'required|unique:users,username',
             'password' => 'required',
-            'division_id' => 'nullable|exists:divisions,id'
+            'division_id' => 'required|array'
         ]);
+
+        $div_ids = $request->division_id;
+        $primary_div = count($div_ids) > 0 ? $div_ids[0] : null;
 
         $user = User::create([
             'username' => $request->username,
             'password_hash' => Hash::make($request->password),
             'role' => 'teller',
-            'division_id' => $request->division_id
+            'division_id' => $primary_div
         ]);
+
+        // Assign teller_id to all selected divisions
+        \App\Models\Division::whereIn('id', $div_ids)->update(['teller_id' => $user->id]);
 
         return response()->json(['success' => true, 'id' => $user->id]);
     }
