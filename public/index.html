@@ -626,8 +626,83 @@
         window._activeFbPlayer = null;
         window._isMutedByTTS = false;
 
-                window.muteMedia = () => {};
-        window.unmuteMedia = () => {};
+                        // --- BULLETPROOF MEDIA CONTROLLER ---
+        window._wasVideoMuted = false;
+        window._activeFbPlayer = null;
+        window._isMutedByTTS = false;
+        window._isMutedByFullScreen = false;
+
+        window.fbAsyncInit = function() {
+          FB.init({
+            xfbml      : false,
+            version    : 'v19.0'
+          });
+          FB.Event.subscribe('xfbml.ready', function(msg) {
+            if (msg.type === 'video') {
+              window._activeFbPlayer = msg.instance;
+              // If it spawns while we are supposed to be muted, aggressively mute it
+              if (window._isMutedByTTS || window._isMutedByFullScreen) {
+                setTimeout(() => { if (window._activeFbPlayer) window._activeFbPlayer.mute(); }, 500);
+              }
+            }
+          });
+        };
+
+        // Master function to execute mutes across all possible players
+        const executeMute = (mute) => {
+            try {
+                // 1. YouTube
+                let iframe = document.querySelector('iframe');
+                if (iframe && !iframe.src.includes('facebook.com')) {
+                    iframe.contentWindow.postMessage(JSON.stringify({event:'command',func: mute ? 'mute' : 'unMute',args:[]}), '*');
+                }
+                
+                // 2. Facebook (via SDK)
+                if (window._activeFbPlayer) {
+                    if (mute) window._activeFbPlayer.mute();
+                    else window._activeFbPlayer.unmute();
+                }
+
+                // 3. Local Uploaded Ads
+                let video = document.querySelector('video');
+                if (video) {
+                    if (mute) {
+                        window._wasVideoMuted = video.muted;
+                        video.muted = true;
+                    } else if (!window._wasVideoMuted) {
+                        video.muted = false;
+                    }
+                }
+            } catch(e) {}
+        };
+
+        window.muteMedia = () => {
+          window._isMutedByTTS = true;
+          executeMute(true);
+        };
+        
+        window.unmuteMedia = () => {
+          window._isMutedByTTS = false;
+          // Don't unmute if we are still in Queue Full Screen
+          if (!window._isMutedByFullScreen) {
+             executeMute(false);
+          }
+        };
+
+        window.muteFullScreen = () => {
+            window._isMutedByFullScreen = true;
+            executeMute(true);
+        };
+
+        window.unmuteFullScreen = () => {
+            window._isMutedByFullScreen = false;
+            // Don't unmute if TTS is currently talking
+            if (!window._isMutedByTTS) {
+                executeMute(false);
+            }
+        };
+
+        
     </script>
 
     <style>
