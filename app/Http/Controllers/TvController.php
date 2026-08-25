@@ -13,13 +13,16 @@ class TvController extends Controller
         $setting = SystemSetting::firstOrCreate([]);
         $ads = AdMedia::all();
 
-        $active_tickets = Ticket::with(['purpose', 'division'])
-            ->whereIn('status', ['IN_QUEUE', 'SERVING'])
-            ->whereHas('division', function($q) use ($tv_id) {
+        $query = Ticket::with(['purpose', 'division'])
+            ->whereIn('status', ['IN_QUEUE', 'SERVING']);
+            
+        if ((int)$tv_id !== 10) {
+            $query->whereHas('division', function($q) use ($tv_id) {
                 $q->where('tv_id', $tv_id);
-            })
-            ->orderBy('created_at')
-            ->get();
+            });
+        }
+        
+        $active_tickets = $query->orderBy('created_at')->get();
 
         $in_queue = [];
         $serving = [];
