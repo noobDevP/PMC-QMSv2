@@ -34,7 +34,7 @@
       // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-QMSV2FB.js?v=58"></script>
+    <script type="module" crossorigin src="/assets/index-QMSV2FB.js?v=60"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-QMSV2FB.css?v=46">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -461,12 +461,12 @@
           
           <div id="dropdown-container" style="display:none;">
             <select id="officer-select">
-              <option value="">Loading officers...</option>
+              <option value="">Loading personnel...</option>
             </select>
           </div>
           
           <div id="manual-container" style="display:block;">
-            <input type="text" id="officer-input" placeholder="Enter officer name" />
+            <input type="text" id="officer-input" placeholder="Enter personnel name" />
           </div>
           
           <button class="primary" id="confirm-serve" disabled style="opacity:0.5; cursor:not-allowed;">Call Next</button>
@@ -479,7 +479,7 @@
         axiosInst.get(`${apiUrl}/officers`).then(res => {
           officers = res.data;
           const select = document.getElementById('officer-select');
-          select.innerHTML = '<option value="">-- Select Officer --</option>';
+          select.innerHTML = '<option value="">-- Select Personnel --</option>';
           officers.forEach(o => {
             select.innerHTML += `<option value="${o.name}">${o.name}</option>`;
           });
@@ -542,7 +542,7 @@
         };
       };
 
-      // Function to open Manage Officers Modal
+      // Function to open Manage Personnel Modal
       function openManageOfficersModal() {
         const overlay = document.createElement('div');
         overlay.className = 'officer-modal-overlay';
@@ -550,11 +550,11 @@
         const modal = document.createElement('div');
         modal.className = 'officer-modal';
         modal.innerHTML = `
-          <h2>Manage Officers</h2>
-          <p>Add or remove officers available for the dropdown.</p>
+          <h2>Manage Personnel</h2>
+          <p>Add or remove personnel available for the dropdown.</p>
           
           <div style="display:flex; gap:8px; margin-bottom:1rem;">
-            <input type="text" id="new-officer-name" placeholder="New Officer Name" style="margin-bottom:0;" />
+            <input type="text" id="new-officer-name" placeholder="New Personnel Name" style="margin-bottom:0;" />
             <button id="add-officer-btn" style="background:var(--btn-primary); color:white; border:none; border-radius:12px; padding:0 1rem; cursor:pointer;">Add</button>
           </div>
           
@@ -580,7 +580,7 @@
           .then(data => {
             const list = document.getElementById('officer-list');
             list.innerHTML = '';
-            if (data.length === 0) list.innerHTML = '<div style="text-align:center; color:#666; font-size:0.9rem;">No officers added.</div>';
+            if (data.length === 0) list.innerHTML = '<div style="text-align:center; color:#666; font-size:0.9rem;">No personnel added.</div>';
             data.forEach(o => {
               const div = document.createElement('div');
               div.className = 'officer-list-item';
@@ -591,7 +591,7 @@
         };
         
         window.deleteOfficer = (id) => {
-          if (!confirm('Delete this officer?')) return;
+          if (!confirm('Delete this personnel?')) return;
           fetch(`${apiUrl}/teller/officers/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
