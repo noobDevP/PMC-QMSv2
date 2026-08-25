@@ -39,7 +39,7 @@ class AdminController extends Controller
     }
 
     public function updateDivision(Request $request, $id) {
-        Division::findOrFail($id)->update($request->only(['name', 'prefix', 'tv_id']));
+        Division::findOrFail($id)->update($request->only(['name', 'prefix', 'tv_id', 'teller_id']));
         return response()->json(['success' => true]);
     }
 

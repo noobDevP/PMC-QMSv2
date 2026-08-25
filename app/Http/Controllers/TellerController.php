@@ -11,7 +11,22 @@ use Carbon\Carbon;
 class TellerController extends Controller
 {
     public function getQueue($division_id) {
-        $tickets = Ticket::where('division_id', $division_id)
+        // Collect all division IDs assigned to this teller from the divisions table
+        $assignedDivisions = Division::where('teller_id', auth()->id())->pluck('id')->toArray();
+        
+        // Also include their primary division_id from the users table (if they have one)
+        $primaryDivision = auth()->user()->division_id;
+        if ($primaryDivision && !in_array($primaryDivision, $assignedDivisions)) {
+            $assignedDivisions[] = $primaryDivision;
+        }
+        
+        // Also include any JSON array divisions if the frontend sends multiple
+        $jsonDivisions = json_decode(auth()->user()->division_id, true);
+        if (is_array($jsonDivisions)) {
+            $assignedDivisions = array_unique(array_merge($assignedDivisions, $jsonDivisions));
+        }
+
+        $tickets = Ticket::whereIn('division_id', empty($assignedDivisions) ? [$division_id] : $assignedDivisions)
             ->whereIn('status', ['IN_QUEUE', 'SERVING'])
             ->orderBy('created_at')
             ->get()->map(function($t) {
