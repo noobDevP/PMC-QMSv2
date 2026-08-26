@@ -10,6 +10,17 @@ use App\Models\Purpose;
 class TvController extends Controller
 {
     public function getState($tv_id) {
+        if (!\Illuminate\Support\Facades\Schema::hasTable('tv_settings')) {
+            \Illuminate\Support\Facades\Schema::create('tv_settings', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->id();
+                $table->integer('tv_id')->unique();
+                $table->string('media_mode', 50)->default('ads');
+                $table->string('youtube_id', 255)->nullable();
+                $table->string('facebook_url', 255)->nullable();
+                $table->boolean('disable_fullscreen_ads')->default(0);
+                $table->timestamps();
+            });
+        }
         $setting = SystemSetting::firstOrCreate([])->toArray();
         $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id])->toArray();
         $merged_settings = array_merge($setting, $tvSetting);
