@@ -21,6 +21,11 @@ class TvController extends Controller
                 $table->timestamps();
             });
         }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('system_settings', 'auto_scroll_queue')) {
+            \Illuminate\Support\Facades\Schema::table('system_settings', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->boolean('auto_scroll_queue')->default(0);
+            });
+        }
         $setting = SystemSetting::firstOrCreate([])->toArray();
         $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id])->toArray();
         $merged_settings = array_merge($setting, $tvSetting);
