@@ -10,7 +10,9 @@ use App\Models\Purpose;
 class TvController extends Controller
 {
     public function getState($tv_id) {
-        $setting = SystemSetting::firstOrCreate([]);
+        $setting = SystemSetting::firstOrCreate([])->toArray();
+        $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id])->toArray();
+        $merged_settings = array_merge($setting, $tvSetting);
         $ads = AdMedia::all();
 
         $query = Ticket::with(['purpose', 'division'])
@@ -51,7 +53,7 @@ class TvController extends Controller
         $serving = array_map(function($s) { unset($s['served_at']); return $s; }, $serving);
 
         return response()->json([
-            'settings' => $setting,
+            'settings' => $merged_settings,
             'ads' => $ads,
             'queue' => [
                 'in_queue' => $in_queue,

@@ -14,6 +14,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin Routes
     Route::get('/admin/settings', [AdminController::class, 'getSettings']);
     Route::post('/admin/settings', [AdminController::class, 'updateSettings']);
+    Route::get('/admin/tv-settings/{tv_id}', [AdminController::class, 'getTvSettings']);
+    Route::post('/admin/tv-settings/{tv_id}', [AdminController::class, 'updateTvSettings']);
     Route::get('/admin/divisions', [AdminController::class, 'getDivisions']);
     Route::post('/admin/divisions', [AdminController::class, 'createDivision']);
     Route::put('/admin/divisions/{id}', [AdminController::class, 'updateDivision']);

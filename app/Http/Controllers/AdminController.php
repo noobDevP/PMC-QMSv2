@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SystemSetting;
+use App\Models\TvSetting;
 use App\Models\Division;
 use App\Models\Purpose;
 use App\Models\AdMedia;
@@ -18,14 +19,34 @@ class AdminController extends Controller
         return response()->json($setting);
     }
 
+    public function getTvSettings($tv_id) {
+        $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id]);
+        return response()->json($tvSetting);
+    }
+
     public function updateSettings(Request $request) {
         $setting = SystemSetting::firstOrCreate([]);
         $setting->update($request->only([
             'tv_idle_seconds', 'shrink_timeout', 'collapse_timeout', 
             'periodic_return_timer', 'periodic_return_mode', 'ads_interval', 
-            'announcement', 'media_mode', 'youtube_id', 'facebook_url', 'disable_fullscreen_ads'
+            'announcement'
         ]));
+        // Note: we still broadcast SettingsUpdated for global settings without tv_id
         event(new \App\Events\SettingsUpdated($setting->toArray()));
+        return response()->json(['success' => true]);
+    }
+
+    public function updateTvSettings(Request $request, $tv_id) {
+        $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id]);
+        $tvSetting->update($request->only([
+            'media_mode', 'youtube_id', 'facebook_url', 'disable_fullscreen_ads'
+        ]));
+        
+        // Broadcast specifically to this TV
+        $payload = $tvSetting->toArray();
+        $payload['is_tv_specific'] = true;
+        event(new \App\Events\SettingsUpdated($payload));
+        
         return response()->json(['success' => true]);
     }
 
