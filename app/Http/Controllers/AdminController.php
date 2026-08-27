@@ -44,7 +44,7 @@ class AdminController extends Controller
         $setting->update($request->only([
             'tv_idle_seconds', 'shrink_timeout', 'collapse_timeout', 
             'periodic_return_timer', 'periodic_return_mode', 'ads_interval', 
-            'announcement'
+            'announcement', 'auto_scroll_queue'
         ]));
         // Note: we still broadcast SettingsUpdated for global settings without tv_id
         event(new \App\Events\SettingsUpdated($setting->toArray()));
