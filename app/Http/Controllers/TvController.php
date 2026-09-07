@@ -28,6 +28,7 @@ class TvController extends Controller
         }
         $setting = SystemSetting::firstOrCreate([])->toArray();
         $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id])->toArray();
+        unset($tvSetting['disable_fullscreen_ads']);
         $merged_settings = array_merge($setting, $tvSetting);
         $ads = AdMedia::all();
 

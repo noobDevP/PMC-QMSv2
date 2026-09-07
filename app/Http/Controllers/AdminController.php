@@ -44,7 +44,7 @@ class AdminController extends Controller
         $setting->update($request->only([
             'tv_idle_seconds', 'shrink_timeout', 'collapse_timeout', 
             'periodic_return_timer', 'periodic_return_mode', 'ads_interval', 
-            'announcement', 'auto_scroll_queue'
+            'announcement', 'auto_scroll_queue', 'disable_fullscreen_ads'
         ]));
         // Note: we still broadcast SettingsUpdated for global settings without tv_id
         event(new \App\Events\SettingsUpdated($setting->toArray()));
@@ -54,7 +54,7 @@ class AdminController extends Controller
     public function updateTvSettings(Request $request, $tv_id) {
         $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id]);
         $tvSetting->update($request->only([
-            'media_mode', 'youtube_id', 'facebook_url', 'disable_fullscreen_ads'
+            'media_mode', 'youtube_id', 'facebook_url'
         ]));
         
         // Broadcast specifically to this TV
