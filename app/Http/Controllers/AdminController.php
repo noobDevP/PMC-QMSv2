@@ -33,6 +33,8 @@ class AdminController extends Controller
                 });
             }
             $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id]);
+            $tvSetting = $tvSetting->toArray();
+            unset($tvSetting['disable_fullscreen_ads']);
             return response()->json($tvSetting);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
@@ -53,6 +55,8 @@ class AdminController extends Controller
 
     public function updateTvSettings(Request $request, $tv_id) {
         $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id]);
+            $tvSetting = $tvSetting->toArray();
+            unset($tvSetting['disable_fullscreen_ads']);
         $tvSetting->update($request->only([
             'media_mode', 'youtube_id', 'facebook_url'
         ]));
