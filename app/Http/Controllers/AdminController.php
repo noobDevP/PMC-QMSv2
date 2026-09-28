@@ -29,7 +29,15 @@ class AdminController extends Controller
                     $table->string('youtube_id', 255)->nullable();
                     $table->string('facebook_url', 255)->nullable();
                     $table->boolean('disable_fullscreen_ads')->default(0);
+                    $table->boolean('show_google_calendar')->default(0);
+                    $table->string('google_calendar_id', 255)->nullable();
                     $table->timestamps();
+                });
+            }
+            if (!\Illuminate\Support\Facades\Schema::hasColumn('tv_settings', 'show_google_calendar')) {
+                \Illuminate\Support\Facades\Schema::table('tv_settings', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->boolean('show_google_calendar')->default(0);
+                    $table->string('google_calendar_id', 255)->nullable();
                 });
             }
             $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id]);
@@ -56,7 +64,7 @@ class AdminController extends Controller
     public function updateTvSettings(Request $request, $tv_id) {
         $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id]);
         $tvSetting->update($request->only([
-            'media_mode', 'youtube_id', 'facebook_url'
+            'media_mode', 'youtube_id', 'facebook_url', 'show_google_calendar', 'google_calendar_id'
         ]));
         
         // Broadcast specifically to this TV
