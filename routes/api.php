@@ -57,5 +57,6 @@ Route::post('/kiosk/ticket', [KioskController::class, 'createTicket']);
 Route::post('/kiosk/ticket/{id}/cancel', [KioskController::class, 'cancelTicket']);
 
 // TV Viewer Routes (Public)
-Route::get('/tv/state/{tv_id}', [TvController::class, 'getState']);\nRoute::get('/tv/calendar-feed/{tv_id}', [TvController::class, 'calendarFeed']);
+Route::get('/tv/state/{tv_id}', [TvController::class, 'getState']);
+Route::get('/tv/calendar-feed/{tv_id}', [TvController::class, 'calendarFeed']);
 

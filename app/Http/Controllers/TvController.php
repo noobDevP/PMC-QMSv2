@@ -86,7 +86,7 @@ class TvController extends Controller
         
         $url = $tvSetting->google_calendar_id;
         try {
-            $ics_content = \Illuminate\Support\Facades\Http::get($url)->body();
+            $ics_content = \Illuminate\Support\Facades\Http::withoutVerifying()->get($url)->body();
             
             $events = [];
             if (preg_match_all('/BEGIN:VEVENT(.*?)END:VEVENT/s', $ics_content, $matches)) {
