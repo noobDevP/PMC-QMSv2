@@ -129,7 +129,7 @@ class TvController extends Controller
                 .carousel-container { width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; }
                 .carousel-wrapper { display: flex; flex-wrap: nowrap; width: 100%; align-items: center; }
                 .carousel-slide { flex: 0 0 50%; max-width: 50%; box-sizing: border-box; padding: 0 0.5rem; }
-                .event-card { width: 100%; background: #f8fafc; border-left: 4px solid #16a34a; border-radius: 4px; padding: 0.5rem 0.75rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+                .event-card { width: 100%; background: #f8fafc; border-left: 6px solid #16a34a; border-radius: 6px; padding: 1rem 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
             </style>';
             $html .= '</head><body>';
             
@@ -141,8 +141,8 @@ class TvController extends Controller
                 foreach ($events as $e) {
                     $html .= '<div class="carousel-slide">';
                     $html .= '<div class="event-card">';
-                    $html .= '<div class="text-[11px] text-green-700 font-bold mb-0.5">' . $e['date_formatted'] . '</div>';
-                    $html .= '<div class="text-sm text-gray-900 font-semibold leading-tight line-clamp-2">' . htmlspecialchars($e['summary']) . '</div>';
+                    $html .= '<div class="text-sm text-green-700 font-bold mb-1">' . $e['date_formatted'] . '</div>';
+                    $html .= '<div class="text-lg text-gray-900 font-bold leading-snug line-clamp-2">' . htmlspecialchars($e['summary']) . '</div>';
                     $html .= '</div></div>';
                 }
                 $html .= '</div></div>';
@@ -151,8 +151,8 @@ class TvController extends Controller
                 foreach ($events as $e) {
                     $html .= '<div class="carousel-slide">';
                     $html .= '<div class="event-card">';
-                    $html .= '<div class="text-[11px] text-green-700 font-bold mb-0.5">' . $e['date_formatted'] . '</div>';
-                    $html .= '<div class="text-sm text-gray-900 font-semibold leading-tight line-clamp-2">' . htmlspecialchars($e['summary']) . '</div>';
+                    $html .= '<div class="text-sm text-green-700 font-bold mb-1">' . $e['date_formatted'] . '</div>';
+                    $html .= '<div class="text-lg text-gray-900 font-bold leading-snug line-clamp-2">' . htmlspecialchars($e['summary']) . '</div>';
                     $html .= '</div></div>';
                 }
                 $html .= '</div></div>';
