@@ -116,7 +116,7 @@ class TvController extends Controller
             $events = array_filter($events, function($e) use ($now, $currentMonth) {
                 if ($e['timestamp'] < $now) return false;
                 if (date('Y-m', $e['timestamp']) !== $currentMonth) return false;
-                if (stripos($e['summary'], 'birthday') !== false) return false;
+                if (stripos($e['summary'], 'birthday') !== false || stripos($e['summary'], 'bday') !== false) return false;
                 return true;
             });
             
