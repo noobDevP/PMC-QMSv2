@@ -120,21 +120,32 @@ class TvController extends Controller
 
             $html = '<!DOCTYPE html><html><head>';
             $html .= '<script src="https://cdn.tailwindcss.com"></script>';
-            $html .= '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />';
             $html .= '<style>
                 body { margin: 0; background: #ffffff; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
-                .swiper { width: 100%; height: 100%; padding: 0 1rem; }
-                .swiper-slide { display: flex; align-items: center; justify-content: center; }
-                .event-card { width: 100%; max-width: 100%; background: #f8fafc; border-left: 5px solid #16a34a; border-radius: 6px; padding: 0.75rem 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+                .carousel-container { width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; }
+                .carousel-wrapper { display: flex; flex-wrap: nowrap; width: 100%; align-items: center; }
+                .carousel-slide { flex: 0 0 50%; max-width: 50%; box-sizing: border-box; padding: 0 1rem; }
+                .event-card { width: 100%; background: #f8fafc; border-left: 5px solid #16a34a; border-radius: 6px; padding: 0.75rem 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
             </style>';
             $html .= '</head><body>';
             
             if (empty($events)) {
-                $html .= '<div class="text-center text-gray-500 mt-10">No upcoming events found.</div>';
-            } else {
-                $html .= '<div class="swiper mySwiper"><div class="swiper-wrapper">';
+                $html .= '<div class="text-center text-gray-500 mt-10 w-full">No upcoming events found.</div>';
+            } else if (count($events) < 2) {
+                // Not enough events to carousel
+                $html .= '<div class="carousel-container"><div class="carousel-wrapper" style="justify-content: center;">';
                 foreach ($events as $e) {
-                    $html .= '<div class="swiper-slide">';
+                    $html .= '<div class="carousel-slide">';
+                    $html .= '<div class="event-card">';
+                    $html .= '<div class="text-xs text-green-700 font-bold mb-1">' . $e['date_formatted'] . '</div>';
+                    $html .= '<div class="text-base text-gray-900 font-semibold leading-snug line-clamp-2">' . htmlspecialchars($e['summary']) . '</div>';
+                    $html .= '</div></div>';
+                }
+                $html .= '</div></div>';
+            } else {
+                $html .= '<div class="carousel-container"><div class="carousel-wrapper" id="wrapper">';
+                foreach ($events as $e) {
+                    $html .= '<div class="carousel-slide">';
                     $html .= '<div class="event-card">';
                     $html .= '<div class="text-xs text-green-700 font-bold mb-1">' . $e['date_formatted'] . '</div>';
                     $html .= '<div class="text-base text-gray-900 font-semibold leading-snug line-clamp-2">' . htmlspecialchars($e['summary']) . '</div>';
@@ -142,18 +153,21 @@ class TvController extends Controller
                 }
                 $html .= '</div></div>';
                 
-                $html .= '<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>';
                 $html .= '<script>
-                    var swiper = new Swiper(".mySwiper", {
-                        slidesPerView: 2,
-                        spaceBetween: 20,
-                        loop: true,
-                        autoplay: {
-                            delay: 3500,
-                            disableOnInteraction: false,
-                        },
-                        speed: 1800,
-                    });
+                    var wrapper = document.getElementById("wrapper");
+                    if (wrapper && wrapper.children.length > 2) {
+                        setInterval(function() {
+                            var firstSlide = wrapper.firstElementChild;
+                            firstSlide.style.transition = "margin-left 1.8s ease-in-out";
+                            firstSlide.style.marginLeft = "-50%";
+                            
+                            setTimeout(function() {
+                                firstSlide.style.transition = "none";
+                                firstSlide.style.marginLeft = "0";
+                                wrapper.appendChild(firstSlide);
+                            }, 1800);
+                        }, 5300); // 3.5s pause + 1.8s transition
+                    }
                 </script>';
             }
             
