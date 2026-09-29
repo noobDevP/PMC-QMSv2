@@ -152,7 +152,7 @@ class TvController extends Controller
                             delay: 3500,
                             disableOnInteraction: false,
                         },
-                        speed: 800,
+                        speed: 1800,
                     });
                 </script>';
             }
