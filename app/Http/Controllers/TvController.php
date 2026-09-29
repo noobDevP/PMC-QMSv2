@@ -125,13 +125,14 @@ class TvController extends Controller
             $html = '<!DOCTYPE html><html><head>';
             $html .= '<script src="https://cdn.tailwindcss.com"></script>';
             $html .= '<style>
-                body { margin: 0; background: #ffffff; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
-                .carousel-container { width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; }
+                body { margin: 0; background: #ffffff; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+                .header-title { text-align: center; font-weight: 700; font-size: 1.25rem; color: #111827; padding-top: 0.4rem; flex-shrink: 0; }
+                .carousel-container { flex-grow: 1; width: 100%; overflow: hidden; display: flex; align-items: flex-end; padding-bottom: 0.6rem; }
                 .carousel-wrapper { display: flex; flex-wrap: nowrap; width: 100%; align-items: center; }
                 .carousel-slide { flex: 0 0 50%; max-width: 50%; box-sizing: border-box; padding: 0 0.5rem; }
-                .event-card { width: 100%; background: #f8fafc; border-left: 6px solid #16a34a; border-radius: 6px; padding: 1rem 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+                .event-card { width: 100%; background: #f8fafc; border-left: 6px solid #16a34a; border-radius: 6px; padding: 0.75rem 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
             </style>';
-            $html .= '</head><body>';
+            $html .= '</head><body>';\n            $html .= '<div class=\"header-title\">PMC Calendar of Activities</div>';
             
             if (empty($events)) {
                 $html .= '<div class="text-center text-gray-500 mt-10 w-full">No upcoming events found.</div>';
