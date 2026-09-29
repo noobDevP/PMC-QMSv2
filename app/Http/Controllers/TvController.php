@@ -102,7 +102,7 @@ class TvController extends Controller
                             $events[] = [
                                 'summary' => $summary,
                                 'timestamp' => $timestamp,
-                                'date_formatted' => date('F j, Y - g:i A', $timestamp)
+                                'date_formatted' => date('M j, Y - g:i A', $timestamp)
                             ];
                         }
                     }
@@ -118,31 +118,46 @@ class TvController extends Controller
             
             $events = array_slice($events, 0, 30);
 
-            $duration = max(15, count($events) * 3);
-
-            $html = '<!DOCTYPE html><html><head><script src="https://cdn.tailwindcss.com"></script>';
+            $html = '<!DOCTYPE html><html><head>';
+            $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+            $html .= '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />';
             $html .= '<style>
-                body { margin: 0; background: #fff; font-family: sans-serif; overflow: hidden; height: 100vh; }
-                .marquee { animation: scroll ' . $duration . 's linear infinite; }
-                @keyframes scroll {
-                    0% { transform: translateY(100vh); }
-                    100% { transform: translateY(-150%); }
-                }
+                body { margin: 0; background: #ffffff; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
+                .swiper { width: 100%; height: 100%; padding: 0 1rem; }
+                .swiper-slide { display: flex; align-items: center; justify-content: center; }
+                .event-card { width: 100%; max-width: 100%; background: #f8fafc; border-left: 5px solid #16a34a; border-radius: 6px; padding: 0.75rem 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
             </style>';
             $html .= '</head><body>';
-            $html .= '<div class="w-full h-full p-6">';
-            $html .= '<h1 class="text-2xl font-bold mb-6 text-gray-800 text-center uppercase tracking-widest border-b-2 pb-2">Upcoming Events</h1>';
-            $html .= '<div class="marquee">';
-            foreach ($events as $e) {
-                $html .= '<div class="mb-5 p-4 bg-gray-50 border-l-[6px] border-green-600 rounded shadow-sm">';
-                $html .= '<div class="text-sm text-green-700 font-bold mb-1">' . $e['date_formatted'] . '</div>';
-                $html .= '<div class="text-xl text-gray-900">' . htmlspecialchars($e['summary']) . '</div>';
-                $html .= '</div>';
-            }
+            
             if (empty($events)) {
                 $html .= '<div class="text-center text-gray-500 mt-10">No upcoming events found.</div>';
+            } else {
+                $html .= '<div class="swiper mySwiper"><div class="swiper-wrapper">';
+                foreach ($events as $e) {
+                    $html .= '<div class="swiper-slide">';
+                    $html .= '<div class="event-card">';
+                    $html .= '<div class="text-xs text-green-700 font-bold mb-1">' . $e['date_formatted'] . '</div>';
+                    $html .= '<div class="text-base text-gray-900 font-semibold leading-snug line-clamp-2">' . htmlspecialchars($e['summary']) . '</div>';
+                    $html .= '</div></div>';
+                }
+                $html .= '</div></div>';
+                
+                $html .= '<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>';
+                $html .= '<script>
+                    var swiper = new Swiper(".mySwiper", {
+                        slidesPerView: 2,
+                        spaceBetween: 20,
+                        loop: true,
+                        autoplay: {
+                            delay: 3500,
+                            disableOnInteraction: false,
+                        },
+                        speed: 800,
+                    });
+                </script>';
             }
-            $html .= '</div></div></body></html>';
+            
+            $html .= '</body></html>';
             
             return response($html)->header('Content-Type', 'text/html');
         } catch (\Exception $e) {
@@ -150,4 +165,3 @@ class TvController extends Controller
         }
     }
 }
-
