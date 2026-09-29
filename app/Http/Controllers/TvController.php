@@ -78,4 +78,76 @@ class TvController extends Controller
             ]
         ]);
     }
+    public function calendarFeed($tv_id) {
+        $tvSetting = \App\Models\TvSetting::where('tv_id', $tv_id)->first();
+        if (!$tvSetting || !$tvSetting->google_calendar_id) {
+            return response('No calendar ID set', 404);
+        }
+        
+        $url = $tvSetting->google_calendar_id;
+        try {
+            $ics_content = \Illuminate\Support\Facades\Http::get($url)->body();
+            
+            $events = [];
+            if (preg_match_all('/BEGIN:VEVENT(.*?)END:VEVENT/s', $ics_content, $matches)) {
+                foreach ($matches[1] as $event_str) {
+                    $summary = '';
+                    $dtstart = '';
+                    if (preg_match('/SUMMARY:(.*?)\r?\n/', $event_str, $m)) $summary = trim($m[1]);
+                    if (preg_match('/DTSTART(?:;.*?)?:(.*?)\r?\n/', $event_str, $m)) $dtstart = trim($m[1]);
+                    
+                    if ($summary && $dtstart) {
+                        $timestamp = strtotime($dtstart);
+                        if ($timestamp) {
+                            $events[] = [
+                                'summary' => $summary,
+                                'timestamp' => $timestamp,
+                                'date_formatted' => date('F j, Y - g:i A', $timestamp)
+                            ];
+                        }
+                    }
+                }
+            }
+            
+            usort($events, function($a, $b) { return $a['timestamp'] - $b['timestamp']; });
+            
+            $now = strtotime('today');
+            $events = array_filter($events, function($e) use ($now) {
+                return $e['timestamp'] >= $now;
+            });
+            
+            $events = array_slice($events, 0, 30);
+
+            $duration = max(15, count($events) * 3);
+
+            $html = '<!DOCTYPE html><html><head><script src="https://cdn.tailwindcss.com"></script>';
+            $html .= '<style>
+                body { margin: 0; background: #fff; font-family: sans-serif; overflow: hidden; height: 100vh; }
+                .marquee { animation: scroll ' . $duration . 's linear infinite; }
+                @keyframes scroll {
+                    0% { transform: translateY(100vh); }
+                    100% { transform: translateY(-150%); }
+                }
+            </style>';
+            $html .= '</head><body>';
+            $html .= '<div class="w-full h-full p-6">';
+            $html .= '<h1 class="text-2xl font-bold mb-6 text-gray-800 text-center uppercase tracking-widest border-b-2 pb-2">Upcoming Events</h1>';
+            $html .= '<div class="marquee">';
+            foreach ($events as $e) {
+                $html .= '<div class="mb-5 p-4 bg-gray-50 border-l-[6px] border-green-600 rounded shadow-sm">';
+                $html .= '<div class="text-sm text-green-700 font-bold mb-1">' . $e['date_formatted'] . '</div>';
+                $html .= '<div class="text-xl text-gray-900">' . htmlspecialchars($e['summary']) . '</div>';
+                $html .= '</div>';
+            }
+            if (empty($events)) {
+                $html .= '<div class="text-center text-gray-500 mt-10">No upcoming events found.</div>';
+            }
+            $html .= '</div></div></body></html>';
+            
+            return response($html)->header('Content-Type', 'text/html');
+        } catch (\Exception $e) {
+            return response('Error fetching calendar: ' . $e->getMessage(), 500);
+        }
+    }
 }
+
