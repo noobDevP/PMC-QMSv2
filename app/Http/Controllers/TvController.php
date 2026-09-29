@@ -112,8 +112,12 @@ class TvController extends Controller
             usort($events, function($a, $b) { return $a['timestamp'] - $b['timestamp']; });
             
             $now = strtotime('today');
-            $events = array_filter($events, function($e) use ($now) {
-                return $e['timestamp'] >= $now;
+            $currentMonth = date('Y-m');
+            $events = array_filter($events, function($e) use ($now, $currentMonth) {
+                if ($e['timestamp'] < $now) return false;
+                if (date('Y-m', $e['timestamp']) !== $currentMonth) return false;
+                if (stripos($e['summary'], 'birthday') !== false) return false;
+                return true;
             });
             
             $events = array_slice($events, 0, 30);
