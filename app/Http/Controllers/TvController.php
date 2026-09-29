@@ -132,7 +132,8 @@ class TvController extends Controller
                 .carousel-slide { flex: 0 0 50%; max-width: 50%; box-sizing: border-box; padding: 0 0.5rem; }
                 .event-card { width: 100%; background: #f8fafc; border-left: 6px solid #16a34a; border-radius: 6px; padding: 0.75rem 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
             </style>';
-            $html .= '</head><body>';\n            $html .= '<div class=\"header-title\">PMC Calendar of Activities</div>';
+            $html .= '</head><body>';
+            $html .= '<div class="header-title">PMC Calendar of Activities</div>';
             
             if (empty($events)) {
                 $html .= '<div class="text-center text-gray-500 mt-10 w-full">No upcoming events found.</div>';
