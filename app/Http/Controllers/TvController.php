@@ -127,14 +127,14 @@ class TvController extends Controller
             $html = '<!DOCTYPE html><html><head>';
             $html .= '<script src="https://cdn.tailwindcss.com"></script>';
             $html .= '<style>
-                body { margin: 0; background: transparent; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
-                .header-title { text-align: center; font-weight: 700; font-size: 2vw; color: #111827; padding-top: 1vw; margin-bottom: 1vw; flex-shrink: 0; background: transparent; }
-                .carousel-container { flex-grow: 1; width: 100%; overflow: hidden; display: flex; align-items: stretch; padding-bottom: 1vw; margin-top: 0; }
-                .carousel-wrapper { display: flex; flex-wrap: nowrap; width: 100%; align-items: stretch; }
-                .carousel-slide { flex: 0 0 50%; max-width: 50%; box-sizing: border-box; padding: 0 1vw; display: flex; align-items: stretch; }
-                .event-card { width: 100%; background: #f8fafc; border-left: 0.4vw solid #16a34a; border-radius: 0.5vw; padding: 0 1vw; box-shadow: 0 0.5vw 1vw rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; height: 100%; box-sizing: border-box; }
-                .card-date { font-size: 1vw; color: #15803d; font-weight: 700; margin-bottom: 0.5vw; }
-                .card-title { font-size: 1.3vw; color: #111827; font-weight: 600; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+                body { margin: 0; background: #f4f6f8; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+                .header-title { text-align: center; font-weight: 700; font-size: 1.3vw; color: #003366; padding-top: 1vh; margin-bottom: 0.5vh; flex-shrink: 0; background: transparent; }
+                .carousel-container { width: 100%; overflow: hidden; display: flex; align-items: center; padding-bottom: 0; margin-top: 0; }
+                .carousel-wrapper { display: flex; flex-wrap: nowrap; width: 100%; align-items: center; }
+                .carousel-slide { flex: 0 0 50%; max-width: 50%; box-sizing: border-box; padding: 0 1vw; }
+                .event-card { width: 100%; background: #ffffff; border-left: 0.4vw solid #16a34a; border-radius: 0.4vw; padding: 1.5vh 1vw; box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
+                .card-date { font-size: 0.9vw; color: #0f766e; font-weight: 700; margin-bottom: 0.5vh; }
+                .card-title { font-size: 1.2vw; color: #111827; font-weight: 500; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
             </style>';
             $html .= '</head><body>';
             $html .= '<div class="header-title">PMC Calendar of Activities</div>';
