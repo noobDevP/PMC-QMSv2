@@ -132,7 +132,7 @@ class TvController extends Controller
                 .carousel-container { width: 100%; overflow: hidden; display: flex; align-items: center; padding-bottom: 0; margin-top: 0; }
                 .carousel-wrapper { display: flex; flex-wrap: nowrap; width: 100%; align-items: center; }
                 .carousel-slide { flex: 0 0 50%; max-width: 50%; box-sizing: border-box; padding: 0 1vw; }
-                .event-card { width: 100%; background: #ffffff; border-left: 0.4vw solid #16a34a; border-radius: 0.4vw; padding: 2.5vh 1vw; box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
+                .event-card { width: 100%; background: #ffffff; border-left: 0.4vw solid #16a34a; border-radius: 0.4vw; padding: 5vh 1.5vw; box-shadow: 0 0.5vh 1vh rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
                 .card-date { font-size: 0.9vw; color: #0f766e; font-weight: 700; margin-bottom: 0.5vh; }
                 .card-title { font-size: 1.2vw; color: #111827; font-weight: 500; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
             </style>';
