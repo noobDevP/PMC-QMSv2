@@ -113,9 +113,11 @@ class TvController extends Controller
             
             $now = strtotime('today');
             $currentMonth = date('Y-m');
-            $events = array_filter($events, function($e) use ($now, $currentMonth) {
+            $nextMonth = date('Y-m', strtotime('first day of next month'));
+            $events = array_filter($events, function($e) use ($now, $currentMonth, $nextMonth) {
                 if ($e['timestamp'] < $now) return false;
-                if (date('Y-m', $e['timestamp']) !== $currentMonth) return false;
+                $eventMonth = date('Y-m', $e['timestamp']);
+                if ($eventMonth !== $currentMonth && $eventMonth !== $nextMonth) return false;
                 if (stripos($e['summary'], 'birthday') !== false || stripos($e['summary'], 'bday') !== false) return false;
                 return true;
             });
