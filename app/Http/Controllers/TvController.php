@@ -125,7 +125,7 @@ class TvController extends Controller
             $html .= '<script src="https://cdn.tailwindcss.com"></script>';
             $html .= '<style>
                 body { margin: 0; background: #f4f6f8; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 1vw 0; box-sizing: border-box; }
-                .header-title { text-align: center; font-weight: 900; font-size: 3vw; color: #4c1d95; padding: 1vw 0; margin-bottom: 1vw; flex-shrink: 0; background: transparent; text-transform: uppercase; letter-spacing: 0.1em; text-shadow: 0 0 6px rgba(76, 29, 149, 0.5), 0 0 14px rgba(76, 29, 149, 0.4); }
+                .header-title { text-align: center; font-weight: 900; font-size: 2vw; color: #4c1d95; padding: 1vw 0; margin-bottom: 1vw; flex-shrink: 0; background: transparent; text-transform: uppercase; letter-spacing: 0.1em; text-shadow: 0 0 6px rgba(76, 29, 149, 0.5), 0 0 14px rgba(76, 29, 149, 0.4); }
                 .carousel-container { width: 100%; overflow: hidden; display: flex; align-items: center; padding: 1vw 0; margin-top: 0; flex-shrink: 0; }
                 .carousel-wrapper { display: flex; flex-wrap: nowrap; width: 100%; align-items: center; }
                 .carousel-slide { flex: 0 0 50%; max-width: 50%; box-sizing: border-box; padding: 0 1vw; }
