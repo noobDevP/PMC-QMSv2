@@ -128,7 +128,7 @@ class TellerController extends Controller
         // Enforce 60-second minimum serving time
         if ($ticket->served_at) {
             $servedAt = \Carbon\Carbon::parse($ticket->served_at);
-            $diff = now()->diffInSeconds($servedAt);
+            $diff = abs(now()->getTimestamp() - $servedAt->getTimestamp());
             if ($diff < 60) {
                 $remaining = 60 - $diff;
                 return response()->json(['error' => 'Please serve the client for at least 1 minute before completing. (' . $remaining . 's remaining)'], 400);
