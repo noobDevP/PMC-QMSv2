@@ -148,13 +148,13 @@ class TvController extends Controller
             $html = '<!DOCTYPE html><html><head>';
             $html .= '<script src="https://cdn.tailwindcss.com"></script>';
             $html .= '<style>
-                body { margin: 0; background: #f4f6f8; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 1vw 0; box-sizing: border-box; }
-                .header-title { text-align: center; font-weight: 700; font-size: 1.5vw; color: #4c1d95; padding: calc(1vw + 5px) 0 1vw 0; margin-bottom: 1vw; flex-shrink: 0; background: transparent; text-transform: uppercase; text-shadow: 0 0 6px rgba(76, 29, 149, 0.5), 0 0 14px rgba(76, 29, 149, 0.4); }
-                .carousel-container { width: 100%; overflow: hidden; display: flex; align-items: center; padding: 1vw 0; margin-top: 0; flex-shrink: 0; }
+                body { margin: 0; background: #f4f6f8; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0; box-sizing: border-box; }
+                .header-title { text-align: center; font-weight: 700; font-size: 1.5vw; color: #4c1d95; padding: 0; margin-bottom: 0.5vw; flex-shrink: 0; background: transparent; text-transform: uppercase; text-shadow: 0 0 6px rgba(76, 29, 149, 0.5), 0 0 14px rgba(76, 29, 149, 0.4); }
+                .carousel-container { width: 100%; overflow: hidden; display: flex; align-items: center; padding: 0; margin-top: 0; flex-shrink: 0; }
                 .carousel-wrapper { display: flex; flex-wrap: nowrap; width: 100%; align-items: center; }
                 .carousel-slide { flex: 0 0 50%; max-width: 50%; box-sizing: border-box; padding: 0 1vw; }
-                .event-card { width: 100%; background: #ffffff; border-left: 0.4vw solid #16a34a; border-radius: 0.4vw; padding: 1.5vw 2vw; box-shadow: 0 0.2vw 0.5vw rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
-                .card-date { font-size: 1vw; color: #0f766e; font-weight: 700; margin-bottom: 0.5vw; }
+                .event-card { width: 100%; background: #ffffff; border-left: 0.4vw solid #16a34a; border-radius: 0.4vw; padding: 1.2vw 1.5vw; box-shadow: 0 0.2vw 0.5vw rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
+                .card-date { font-size: 1vw; color: #0f766e; font-weight: 700; margin-bottom: 0.3vw; }
                 .card-title { font-size: 1.4vw; color: #111827; font-weight: 500; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
             </style>';
             $html .= '</head><body>';
