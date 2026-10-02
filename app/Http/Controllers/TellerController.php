@@ -126,9 +126,13 @@ class TellerController extends Controller
         if ($ticket->status !== 'SERVING') return response()->json(['error' => 'Invalid ticket'], 400);
 
         // Enforce 60-second minimum serving time
-        if ($ticket->served_at && now()->diffInSeconds($ticket->served_at) < 60) {
-            $remaining = 60 - now()->diffInSeconds($ticket->served_at);
-            return response()->json(['error' => 'Please serve the client for at least 1 minute before completing. (' . $remaining . 's remaining)'], 400);
+        if ($ticket->served_at) {
+            $servedAt = \Carbon\Carbon::parse($ticket->served_at);
+            $diff = now()->diffInSeconds($servedAt);
+            if ($diff < 60) {
+                $remaining = 60 - $diff;
+                return response()->json(['error' => 'Please serve the client for at least 1 minute before completing. (' . $remaining . 's remaining)'], 400);
+            }
         }
 
         $ticket->update(['status' => 'COMPLETED', 'completed_at' => now()]);
