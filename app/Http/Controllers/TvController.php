@@ -97,10 +97,32 @@ class TvController extends Controller
                     if (preg_match('/DTSTART(?:;.*?)?:(.*?)\r?\n/', $event_str, $m)) $dtstart = trim($m[1]);
                     
                     if ($summary && $dtstart) {
+                        $dtstart = trim($dtstart);
+                        $is_all_day = (strlen($dtstart) == 8);
+                        
+                        // Parse the raw time correctly based on Google Calendar formatting
                         $timestamp = strtotime($dtstart);
+                        
                         if ($timestamp) {
-                            $is_all_day = (strlen(trim($dtstart)) == 8); // e.g. 20261012
-                            $formatted = $is_all_day ? date('M j, Y', $timestamp) . ' - All Day' : date('M j, Y - g:i A', $timestamp);
+                            // If it's a specific time event in UTC (has Z at the end), we MUST offset it to Manila time (+8)
+                            // If it doesn't have Z, Google is likely sending it as local time (Manila), so no offset needed.
+                            if (!$is_all_day && substr($dtstart, -1) === 'Z') {
+                                // $timestamp is currently parsed as UTC by strtotime. 
+                                // But wait! Since Laravel app timezone is UTC, strtotime("...Z") and strtotime("...") 
+                                // both yield a UTC timestamp!
+                                // To explicitly format it to Manila time:
+                                $dt = new \DateTime('@' . $timestamp);
+                                $dt->setTimezone(new \DateTimeZone('Asia/Manila'));
+                                $formatted = $dt->format('M j, Y - g:i A');
+                            } elseif (!$is_all_day) {
+                                // It was provided without Z, so it is assumed to be local Manila time already!
+                                // But since Laravel is in UTC, strtotime parsed it as if the numbers were UTC.
+                                // We just format it directly since the face-value numbers are the Manila time.
+                                $formatted = date('M j, Y - g:i A', $timestamp);
+                            } else {
+                                $formatted = date('M j, Y', $timestamp) . ' - All Day';
+                            }
+                            
                             $events[] = [
                                 'summary' => $summary,
                                 'timestamp' => $timestamp,
