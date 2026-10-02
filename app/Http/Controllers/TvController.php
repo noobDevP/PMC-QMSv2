@@ -99,10 +99,12 @@ class TvController extends Controller
                     if ($summary && $dtstart) {
                         $timestamp = strtotime($dtstart);
                         if ($timestamp) {
+                            $is_all_day = (strlen(trim($dtstart)) == 8); // e.g. 20261012
+                            $formatted = $is_all_day ? date('M j, Y', $timestamp) . ' - All Day' : date('M j, Y - g:i A', $timestamp);
                             $events[] = [
                                 'summary' => $summary,
                                 'timestamp' => $timestamp,
-                                'date_formatted' => date('M j, Y - g:i A', $timestamp)
+                                'date_formatted' => $formatted
                             ];
                         }
                     }
