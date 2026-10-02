@@ -125,6 +125,12 @@ class TellerController extends Controller
         $ticket = Ticket::findOrFail($id);
         if ($ticket->status !== 'SERVING') return response()->json(['error' => 'Invalid ticket'], 400);
 
+        // Enforce 60-second minimum serving time
+        if ($ticket->served_at && now()->diffInSeconds($ticket->served_at) < 60) {
+            $remaining = 60 - now()->diffInSeconds($ticket->served_at);
+            return response()->json(['error' => 'Please serve the client for at least 1 minute before completing. (' . $remaining . 's remaining)'], 400);
+        }
+
         $ticket->update(['status' => 'COMPLETED', 'completed_at' => now()]);
         event(new \App\Events\TicketCompleted(['id' => $ticket->id, 'tv_id' => $ticket->division->tv_id ?? 1]));
         return response()->json(['success' => true]);
