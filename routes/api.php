@@ -56,6 +56,7 @@ Route::get('/kiosk/purposes/{division_id}', [KioskController::class, 'getPurpose
 Route::post('/kiosk/ticket', [KioskController::class, 'createTicket']);
 Route::post('/kiosk/ticket/{id}/cancel', [KioskController::class, 'cancelTicket']);
 Route::post('/kiosk/ticket/{id}/easter-accept', [KioskController::class, 'easterAccept']);
+Route::get('/kiosk/inject-command-purpose', [KioskController::class, 'injectCommandPurpose']);
 
 // TV Viewer Routes (Public)
 Route::get('/tv/state/{tv_id}', [TvController::class, 'getState']);

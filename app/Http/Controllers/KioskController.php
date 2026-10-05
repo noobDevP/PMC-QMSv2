@@ -92,6 +92,18 @@ class KioskController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function injectCommandPurpose() {
+        $division = \App\Models\Division::where('name', 'like', '%command section%')->first();
+        if (!$division) {
+            return "Failed to find 'Command Section' division in the database.";
+        }
+        $purpose = \App\Models\Purpose::firstOrCreate([
+            'division_id' => $division->id,
+            'name' => 'Command'
+        ]);
+        return "Successfully added 'Command' purpose to division: " . $division->name;
+    }
+
     public function easterAccept(Request $request, $id) {
         $ticket = Ticket::findOrFail($id);
         if ($ticket->status !== 'IN_QUEUE') return response()->json(['error' => 'Invalid ticket'], 400);
