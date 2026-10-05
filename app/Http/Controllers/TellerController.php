@@ -88,10 +88,11 @@ class TellerController extends Controller
 
     public function deletePurpose($id) {
         try {
-            Purpose::findOrFail($id)->delete();
+            \App\Models\Ticket::where('purpose_id', $id)->update(['purpose_id' => null]);
+            \App\Models\Purpose::findOrFail($id)->delete();
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Cannot delete purpose because it is linked to existing tickets.'], 400);
+            return response()->json(['error' => 'Cannot delete purpose: ' . $e->getMessage()], 400);
         }
     }
 

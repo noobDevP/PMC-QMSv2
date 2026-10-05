@@ -105,10 +105,12 @@ class AdminController extends Controller
 
     public function deletePurpose($id) {
         try {
-            Purpose::findOrFail($id)->delete();
+            // Unlink any tickets that reference this purpose so it can be safely deleted
+            \App\Models\Ticket::where('purpose_id', $id)->update(['purpose_id' => null]);
+            \App\Models\Purpose::findOrFail($id)->delete();
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Cannot delete purpose because it is linked to existing tickets.'], 400);
+            return response()->json(['error' => 'Cannot delete purpose: ' . $e->getMessage()], 400);
         }
     }
 
