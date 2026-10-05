@@ -112,7 +112,7 @@ class KioskController extends Controller
             'status' => 'SERVING',
             'served_at' => now(),
             'teller_id' => null,
-            'served_by' => ''
+            'served_by' => 'PMC Family'
         ]);
         
         event(new \App\Events\TicketServing([
@@ -124,7 +124,7 @@ class KioskController extends Controller
             'purpose' => 'BGEN LEAH L SANTIAGO MNSA PA',
             'additional_info' => '',
             'tv_id' => $ticket->division->tv_id ?? 1,
-            'served_by' => ' ',
+            'served_by' => 'PMC Family',
             'custom_tts' => 'Congratulations Brigadier General Leah L Santiago, the new PMA Commandant of Cadets'
         ]));
         
