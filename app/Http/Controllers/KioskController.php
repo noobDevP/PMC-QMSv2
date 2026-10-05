@@ -51,7 +51,7 @@ class KioskController extends Controller
                 'purpose' => 'BGEN LEAH L SANTIAGO MNSA PA', 
                 'tv_id' => $division->tv_id, 
                 'audio_url' => '',
-                'custom_tts' => 'Brigadier General Leah L Santiago is now waiting to be served'
+                'custom_tts' => 'Brigadier General Leah L Santiago is now ready to serve'
             ]));
 
             return response()->json([
