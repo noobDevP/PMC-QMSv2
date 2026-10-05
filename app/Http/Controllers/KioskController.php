@@ -51,7 +51,7 @@ class KioskController extends Controller
                 'purpose' => 'BGEN LEAH L SANTIAGO MNSA PA', 
                 'tv_id' => $division->tv_id, 
                 'audio_url' => '',
-                'custom_tts' => 'BGEN LEAH L SANTIAGO is now waiting to be served'
+                'custom_tts' => 'Brigadier General Leah L Santiago is now waiting to be served'
             ]));
 
             return response()->json([
@@ -125,7 +125,7 @@ class KioskController extends Controller
             'additional_info' => '',
             'tv_id' => $ticket->division->tv_id ?? 1,
             'served_by' => ' ',
-            'custom_tts' => 'congratulations BGEN LEAH L SANTIAGO'
+            'custom_tts' => 'Congratulations Brigadier General Leah L Santiago, the new PMA Commandant of Cadets'
         ]));
         
         return response()->json(['success' => true]);
