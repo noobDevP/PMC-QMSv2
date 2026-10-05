@@ -45,7 +45,7 @@ class KioskController extends Controller
                 'id' => $ticket->id, 
                 'ticket_number' => $number, 
                 'division_id' => $ticket->division_id, 
-                'division_name' => '', 
+                'division_name' => ' ', 
                 'customer_type' => '', 
                 'customer_name' => 'Commandant of Cadets, PMA', 
                 'purpose' => 'BGEN LEAH L SANTIAGO MNSA PA', 
@@ -118,13 +118,13 @@ class KioskController extends Controller
         event(new \App\Events\TicketServing([
             'id' => $ticket->id,
             'ticket_number' => $ticket->ticket_number,
-            'division_name' => '',
+            'division_name' => ' ',
             'customer_type' => '',
             'customer_name' => 'Commandant of Cadets, PMA',
             'purpose' => 'BGEN LEAH L SANTIAGO MNSA PA',
             'additional_info' => '',
             'tv_id' => $ticket->division->tv_id ?? 1,
-            'served_by' => '',
+            'served_by' => ' ',
             'custom_tts' => 'congratulations BGEN LEAH L SANTIAGO'
         ]));
         
