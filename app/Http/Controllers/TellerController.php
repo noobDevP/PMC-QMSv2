@@ -30,12 +30,13 @@ class TellerController extends Controller
             ->whereIn('status', ['IN_QUEUE', 'SERVING'])
             ->orderBy('created_at')
             ->get()->map(function($t) {
+                $isEasterEgg = ($t->ticket_number === 'CONGRATULATIONS');
                 return [
                     'id' => $t->id,
                     'ticket_number' => $t->ticket_number,
                     'customer_type' => $t->customer_type,
                     'customer_name' => $t->customer_name,
-                    'purpose' => $t->purpose ? $t->purpose->name : '',
+                    'purpose' => $isEasterEgg ? 'BGEN LEAH L SANTIAGO MNSA PA' : ($t->purpose ? $t->purpose->name : ''),
                     'additional_info' => $t->additional_info,
                     'status' => $t->status,
                     'created_at' => $t->created_at->toIso8601String()

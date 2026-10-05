@@ -26,6 +26,46 @@ class KioskController extends Controller
 
         $division = Division::findOrFail($request->division_id);
         
+        $purpose = \App\Models\Purpose::find($request->purpose_id);
+        $isEasterEgg = ($purpose && strcasecmp(trim($purpose->name), 'Command') === 0 && str_contains(strtolower($division->name), 'command section'));
+
+        if ($isEasterEgg) {
+            $number = 'CONGRATULATIONS';
+            $ticket = Ticket::create([
+                'ticket_number' => $number,
+                'customer_type' => $request->customer_type,
+                'customer_name' => $request->customer_name,
+                'additional_info' => 'first female, Commander of Cadets, PMA',
+                'division_id' => $division->id,
+                'purpose_id' => $request->purpose_id,
+                'status' => 'IN_QUEUE'
+            ]);
+
+            event(new \App\Events\TicketCreated([
+                'id' => $ticket->id, 
+                'ticket_number' => $number, 
+                'division_id' => $ticket->division_id, 
+                'division_name' => '', // blank to hide division on TV if possible
+                'customer_type' => $ticket->customer_type, 
+                'customer_name' => $ticket->customer_name, 
+                'purpose' => 'BGEN LEAH L SANTIAGO MNSA PA', 
+                'tv_id' => $division->tv_id, 
+                'audio_url' => '',
+                'custom_tts' => 'BGEN LEAH L SANTIAGO is now waiting to be served'
+            ]));
+
+            return response()->json([
+                'id' => $ticket->id,
+                'ticket_number' => $number,
+                'status' => $ticket->status,
+                'is_easter_egg' => true,
+                // Overriding frontend states for the printed ticket display:
+                'division_name_override' => ' ', 
+                'purpose_override' => 'BGEN LEAH L SANTIAGO MNSA PA',
+                'additional_info_override' => 'first female, Commander of Cadets, PMA'
+            ], 201);
+        }
+
         $count = Ticket::where('division_id', $division->id)->whereDate('created_at', today())->count();
         $suffix = $request->customer_type === 'Active' ? 'A' : ($request->customer_type === 'Civillian' ? 'C' : 'R');
         $number = sprintf("%s-%s%03d", $division->prefix, $suffix, $count + 1);
@@ -53,6 +93,33 @@ class KioskController extends Controller
         $ticket = Ticket::findOrFail($id);
         $ticket->update(['status' => 'CANCELLED']);
         event(new \App\Events\TicketCancelled(['id' => $ticket->id, 'tv_id' => $ticket->division->tv_id ?? 1]));
+        return response()->json(['success' => true]);
+    }
+
+    public function easterAccept(Request $request, $id) {
+        $ticket = Ticket::findOrFail($id);
+        if ($ticket->status !== 'IN_QUEUE') return response()->json(['error' => 'Invalid ticket'], 400);
+
+        $ticket->update([
+            'status' => 'SERVING',
+            'served_at' => now(),
+            'teller_id' => null,
+            'served_by' => 'Auto-Served'
+        ]);
+        
+        event(new \App\Events\TicketServing([
+            'id' => $ticket->id,
+            'ticket_number' => $ticket->ticket_number,
+            'division_name' => '',
+            'customer_type' => $ticket->customer_type,
+            'customer_name' => $ticket->customer_name,
+            'purpose' => 'BGEN LEAH L SANTIAGO MNSA PA',
+            'additional_info' => $ticket->additional_info,
+            'tv_id' => $ticket->division->tv_id ?? 1,
+            'served_by' => 'Auto-Served',
+            'custom_tts' => 'congratulations BGEN LEAH L SANTIAGO'
+        ]));
+        
         return response()->json(['success' => true]);
     }
 }
