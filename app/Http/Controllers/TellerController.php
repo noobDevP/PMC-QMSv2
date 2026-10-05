@@ -88,7 +88,7 @@ class TellerController extends Controller
 
     public function deletePurpose($id) {
         try {
-            \App\Models\Ticket::where('purpose_id', $id)->update(['purpose_id' => null]);
+            \App\Models\Ticket::where('purpose_id', $id)->delete();
             \App\Models\Purpose::findOrFail($id)->delete();
             return response()->json(['success' => true]);
         } catch (\Exception $e) {

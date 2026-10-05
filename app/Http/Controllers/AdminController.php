@@ -105,8 +105,8 @@ class AdminController extends Controller
 
     public function deletePurpose($id) {
         try {
-            // Unlink any tickets that reference this purpose so it can be safely deleted
-            \App\Models\Ticket::where('purpose_id', $id)->update(['purpose_id' => null]);
+            // Delete any tickets that reference this purpose since we cannot nullify purpose_id
+            \App\Models\Ticket::where('purpose_id', $id)->delete();
             \App\Models\Purpose::findOrFail($id)->delete();
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
