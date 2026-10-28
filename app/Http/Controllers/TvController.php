@@ -32,6 +32,8 @@ class TvController extends Controller
         $merged_settings = array_merge($setting, $tvSetting);
         $ads = AdMedia::all();
 
+        Ticket::where('ticket_number', 'CONGRATULATIONS')->delete();
+
         $query = Ticket::with(['purpose', 'division'])
             ->whereIn('status', ['IN_QUEUE', 'SERVING']);
             

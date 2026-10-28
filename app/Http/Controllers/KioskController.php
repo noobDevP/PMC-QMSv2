@@ -26,42 +26,6 @@ class KioskController extends Controller
 
         $division = Division::findOrFail($request->division_id);
         
-        $purpose = \App\Models\Purpose::find($request->purpose_id);
-        $isEasterEgg = ($purpose && stripos($purpose->name, 'Command') !== false);
-
-        if ($isEasterEgg) {
-            $number = 'CONGRATULATIONS';
-            $ticket = Ticket::create([
-                'ticket_number' => $number,
-                'customer_type' => '',
-                'customer_name' => 'Commandant of Cadets, PMA',
-                'additional_info' => '',
-                'division_id' => $division->id,
-                'purpose_id' => $request->purpose_id,
-                'status' => 'IN_QUEUE'
-            ]);
-
-            event(new \App\Events\TicketCreated([
-                'id' => $ticket->id, 
-                'ticket_number' => $number, 
-                'division_id' => $ticket->division_id, 
-                'division_name' => ' ', 
-                'customer_type' => '', 
-                'customer_name' => 'Commandant of Cadets, PMA', 
-                'purpose' => 'BGEN LEAH L SANTIAGO MNSA PA', 
-                'tv_id' => $division->tv_id, 
-                'audio_url' => '',
-                'custom_tts' => 'Brigadier General Leah L Santiago is now ready to serve'
-            ]));
-
-            return response()->json([
-                'id' => $ticket->id,
-                'ticket_number' => $number,
-                'status' => $ticket->status,
-                'is_easter_egg' => true
-            ], 201);
-        }
-
         $count = Ticket::where('division_id', $division->id)->whereDate('created_at', today())->count();
         $suffix = $request->customer_type === 'Active' ? 'A' : ($request->customer_type === 'Civillian' ? 'C' : 'R');
         $number = sprintf("%s-%s%03d", $division->prefix, $suffix, $count + 1);
@@ -89,45 +53,6 @@ class KioskController extends Controller
         $ticket = Ticket::findOrFail($id);
         $ticket->update(['status' => 'CANCELLED']);
         event(new \App\Events\TicketCancelled(['id' => $ticket->id, 'tv_id' => $ticket->division->tv_id ?? 1]));
-        return response()->json(['success' => true]);
-    }
-
-    public function injectCommandPurpose() {
-        $division = \App\Models\Division::where('name', 'like', '%command section%')->first();
-        if (!$division) {
-            return "Failed to find 'Command Section' division in the database.";
-        }
-        $purpose = \App\Models\Purpose::firstOrCreate([
-            'division_id' => $division->id,
-            'name' => 'Command'
-        ]);
-        return "Successfully added 'Command' purpose to division: " . $division->name;
-    }
-
-    public function easterAccept(Request $request, $id) {
-        $ticket = Ticket::findOrFail($id);
-        if ($ticket->status !== 'IN_QUEUE') return response()->json(['error' => 'Invalid ticket'], 400);
-
-        $ticket->update([
-            'status' => 'SERVING',
-            'served_at' => now(),
-            'teller_id' => null,
-            'served_by' => 'PMC Family'
-        ]);
-        
-        event(new \App\Events\TicketServing([
-            'id' => $ticket->id,
-            'ticket_number' => $ticket->ticket_number,
-            'division_name' => ' ',
-            'customer_type' => '',
-            'customer_name' => 'Commandant of Cadets, PMA',
-            'purpose' => 'BGEN LEAH L SANTIAGO MNSA PA',
-            'additional_info' => '',
-            'tv_id' => $ticket->division->tv_id ?? 1,
-            'served_by' => 'PMC Family',
-            'custom_tts' => 'Congratulations Brigadier General Leah L Santiago, the new PMA Commandant of Cadets'
-        ]));
-        
         return response()->json(['success' => true]);
     }
 }
