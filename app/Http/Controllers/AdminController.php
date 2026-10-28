@@ -156,14 +156,12 @@ class AdminController extends Controller
                 'id' => $div->id,
                 'name' => $div->name,
                 'count' => 0,
+                'queue_count' => 0,
+                'serving_count' => 0,
                 'queue_time' => 0,
                 'serving_time' => 0
             ];
         }
-
-        $grandCount = 0;
-        $grandQueueTime = 0;
-        $grandServingTime = 0;
 
         foreach ($tickets as $t) {
             $divName = $t->division ? $t->division->name : ($divisions[$t->division_id]->name ?? '');
@@ -182,31 +180,33 @@ class AdminController extends Controller
                     'id' => $t->division_id,
                     'name' => $divName,
                     'count' => 0,
+                    'queue_count' => 0,
+                    'serving_count' => 0,
                     'queue_time' => 0,
                     'serving_time' => 0
                 ];
             }
 
             $divTotals[$t->division_id]['count']++;
-            $divTotals[$t->division_id]['queue_time'] += ($qtVal ?? 0);
-            $divTotals[$t->division_id]['serving_time'] += ($stVal ?? 0);
-
-            $grandCount++;
-            $grandQueueTime += ($qtVal ?? 0);
-            $grandServingTime += ($stVal ?? 0);
+            if ($qtVal !== null) {
+                $divTotals[$t->division_id]['queue_count']++;
+                $divTotals[$t->division_id]['queue_time'] += $qtVal;
+            }
+            if ($stVal !== null) {
+                $divTotals[$t->division_id]['serving_count']++;
+                $divTotals[$t->division_id]['serving_time'] += $stVal;
+            }
         }
 
-        $csv .= "\nSUMMARY BY DIVISION,,Division ID,Division Name,Total Tickets,,,,,Total Queue Time (mins),Total Serving Time (mins)\n";
+        $csv .= "\nSUMMARY BY DIVISION,,Division ID,Division Name,Total Tickets,,,Avg Queue Time (mins),Avg Serving Time (mins),Total Queue Time (mins),Total Serving Time (mins)\n";
         foreach ($divTotals as $dt) {
             $escapedName = '"' . str_replace('"', '""', $dt['name']) . '"';
             $qTotal = round($dt['queue_time'], 2);
             $sTotal = round($dt['serving_time'], 2);
-            $csv .= "DIVISION TOTAL,,{$dt['id']},{$escapedName},{$dt['count']},,,,,{$qTotal},{$sTotal}\n";
+            $qAvg = $dt['queue_count'] > 0 ? round($dt['queue_time'] / $dt['queue_count'], 2) : 0;
+            $sAvg = $dt['serving_count'] > 0 ? round($dt['serving_time'] / $dt['serving_count'], 2) : 0;
+            $csv .= "DIVISION SUMMARY,,{$dt['id']},{$escapedName},{$dt['count']},,,{$qAvg},{$sAvg},{$qTotal},{$sTotal}\n";
         }
-
-        $grandQueueRounded = round($grandQueueTime, 2);
-        $grandServingRounded = round($grandServingTime, 2);
-        $csv .= "GRAND TOTAL,,,\"All Divisions\",{$grandCount},,,,,{$grandQueueRounded},{$grandServingRounded}\n";
 
         return response($csv)
             ->header('Content-Type', 'text/csv')
