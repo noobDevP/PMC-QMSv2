@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Purpose extends Model
 {
-    protected $guarded = [];
+    protected $fillable = ['name', 'division_id'];
 
     public function division()
     {

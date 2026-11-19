@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Division extends Model
 {
-    protected $guarded = [];
+    protected $fillable = ['name', 'prefix', 'tv_id', 'teller_id'];
 
     public function tickets()
     {

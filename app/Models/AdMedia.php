@@ -5,5 +5,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class AdMedia extends Model
 {
-    protected $guarded = [];
+    protected $fillable = ['filename', 'file_type', 'duration'];
 }

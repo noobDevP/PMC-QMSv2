@@ -1,48 +1,59 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\SystemSetting;
 use App\Models\AdMedia;
+use App\Models\SystemSetting;
 use App\Models\Ticket;
-use App\Models\Division;
-use App\Models\Purpose;
+use App\Models\TvSetting;
+use App\Support\UrlValidator;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TvController extends Controller
 {
-    public function getState($tv_id) {
-        if (!\Illuminate\Support\Facades\Schema::hasTable('tv_settings')) {
-            \Illuminate\Support\Facades\Schema::create('tv_settings', function (\Illuminate\Database\Schema\Blueprint $table) {
-                $table->id();
-                $table->integer('tv_id')->unique();
-                $table->string('media_mode', 50)->default('ads');
-                $table->string('youtube_id', 255)->nullable();
-                $table->string('facebook_url', 255)->nullable();
-                $table->boolean('disable_fullscreen_ads')->default(0);
-                $table->timestamps();
-            });
+    public function getState($tv_id)
+    {
+        $tvId = filter_var($tv_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 20]]);
+        if ($tvId === false) {
+            return response()->json(['error' => 'Invalid TV ID'], 400);
         }
-                if (!\Illuminate\Support\Facades\Schema::hasColumn('system_settings', 'auto_scroll_queue')) {
-            \Illuminate\Support\Facades\Schema::table('system_settings', function (\Illuminate\Database\Schema\Blueprint $table) {
-                $table->boolean('auto_scroll_queue')->default(0);
-            });
-        }
-        $setting = SystemSetting::firstOrCreate([])->toArray();
-        $tvSetting = \App\Models\TvSetting::firstOrCreate(['tv_id' => $tv_id])->toArray();
+
+        $settingRow = SystemSetting::first();
+        $setting = $settingRow ? $settingRow->toArray() : [
+            'tv_idle_seconds' => 30,
+            'shrink_timeout' => 15,
+            'collapse_timeout' => 30,
+            'periodic_return_timer' => 0,
+            'periodic_return_mode' => 'full_queue',
+            'ads_interval' => 10,
+            'announcement' => null,
+            'auto_scroll_queue' => 0,
+            'disable_fullscreen_ads' => 0,
+        ];
+
+        $tvRow = TvSetting::where('tv_id', $tvId)->first();
+        $tvSetting = $tvRow ? $tvRow->toArray() : [
+            'tv_id' => $tvId,
+            'media_mode' => 'ads',
+            'youtube_id' => null,
+            'facebook_url' => null,
+            'show_google_calendar' => 0,
+            'google_calendar_id' => null,
+        ];
         unset($tvSetting['disable_fullscreen_ads']);
+
         $merged_settings = array_merge($setting, $tvSetting);
         $ads = AdMedia::all();
 
-        Ticket::where('ticket_number', 'CONGRATULATIONS')->delete();
-
         $query = Ticket::with(['purpose', 'division'])
             ->whereIn('status', ['IN_QUEUE', 'SERVING']);
-            
-        if ((int)$tv_id !== 10) {
-            $query->whereHas('division', function($q) use ($tv_id) {
-                $q->where('tv_id', $tv_id);
+
+        if ($tvId !== 10) {
+            $query->whereHas('division', function ($q) use ($tvId) {
+                $q->where('tv_id', $tvId);
             });
         }
-        
+
         $active_tickets = $query->orderBy('created_at')->get();
 
         $in_queue = [];
@@ -56,7 +67,7 @@ class TvController extends Controller
                 'customer_name' => $t->customer_name,
                 'purpose' => $t->purpose ? $t->purpose->name : '',
                 'division_name' => $t->division ? $t->division->name : '',
-                'served_by' => $t->served_by
+                'served_by' => $t->served_by,
             ];
             if ($t->status === 'IN_QUEUE') {
                 $in_queue[] = $data;
@@ -65,86 +76,118 @@ class TvController extends Controller
             }
         }
 
-        usort($serving, function($a, $b) {
+        usort($serving, function ($a, $b) {
             return strtotime($b['served_at']) - strtotime($a['served_at']);
         });
 
-        $serving = array_map(function($s) { unset($s['served_at']); return $s; }, $serving);
+        $serving = array_map(function ($s) {
+            unset($s['served_at']);
+            return $s;
+        }, $serving);
 
         return response()->json([
             'settings' => $merged_settings,
             'ads' => $ads,
             'queue' => [
                 'in_queue' => $in_queue,
-                'serving' => array_values($serving)
-            ]
+                'serving' => array_values($serving),
+            ],
         ]);
     }
-    public function calendarFeed($tv_id) {
-        $tvSetting = \App\Models\TvSetting::where('tv_id', $tv_id)->first();
+
+    public function calendarFeed($tv_id)
+    {
+        $tvId = filter_var($tv_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 20]]);
+        if ($tvId === false) {
+            return response('Invalid TV ID', 400);
+        }
+
+        $tvSetting = TvSetting::where('tv_id', $tvId)->first();
         if (!$tvSetting || !$tvSetting->google_calendar_id) {
             return response('No calendar ID set', 404);
         }
-        
-        $url = $tvSetting->google_calendar_id;
+
+        $url = trim((string) $tvSetting->google_calendar_id);
+        if (!UrlValidator::isValidGoogleCalendarIcsUrl($url)) {
+            return response('Invalid calendar feed configuration.', 400);
+        }
+
         try {
-            $ics_content = \Illuminate\Support\Facades\Http::withoutVerifying()->get($url)->body();
-            
+            $currentUrl = $url;
+            $response = null;
+            for ($hop = 0; $hop < 3; $hop++) {
+                $response = Http::timeout(8)->withoutRedirecting()->get($currentUrl);
+                if ($response->status() >= 300 && $response->status() < 400 && $response->header('Location')) {
+                    $nextUrl = $response->header('Location');
+                    if (!UrlValidator::isValidGoogleCalendarIcsUrl($nextUrl)) {
+                        return response('Invalid calendar redirect.', 400);
+                    }
+                    $currentUrl = $nextUrl;
+                    continue;
+                }
+                break;
+            }
+
+            if (!$response || !$response->successful()) {
+                return response('Unable to load calendar feed.', 502);
+            }
+
+            $ics_content = $response->body();
+
             $events = [];
             if (preg_match_all('/BEGIN:VEVENT(.*?)END:VEVENT/s', $ics_content, $matches)) {
                 foreach ($matches[1] as $event_str) {
                     $summary = '';
                     $dtstart = '';
-                    if (preg_match('/SUMMARY:(.*?)\r?\n/', $event_str, $m)) $summary = trim($m[1]);
-                    if (preg_match('/DTSTART(?:;.*?)?:(.*?)\r?\n/', $event_str, $m)) $dtstart = trim($m[1]);
-                    
+                    if (preg_match('/SUMMARY:(.*?)\r?\n/', $event_str, $m)) {
+                        $summary = trim($m[1]);
+                    }
+                    if (preg_match('/DTSTART(?:;.*?)?:(.*?)\r?\n/', $event_str, $m)) {
+                        $dtstart = trim($m[1]);
+                    }
+
                     if ($summary && $dtstart) {
                         $dtstart = trim($dtstart);
                         $is_all_day = (strlen($dtstart) == 8);
-                        
-                        // Parse the raw time correctly based on Google Calendar formatting
                         $timestamp = strtotime($dtstart);
-                        
+
                         if ($timestamp) {
-                            // If it's a specific time event in UTC (has Z at the end), we MUST offset it to Manila time (+8)
-                            // If it doesn't have Z, Google is likely sending it as local time (Manila), so no offset needed.
                             if (!$is_all_day && substr($dtstart, -1) === 'Z') {
-                                // $timestamp is currently parsed as UTC by strtotime. 
-                                // But wait! Since Laravel app timezone is UTC, strtotime("...Z") and strtotime("...") 
-                                // both yield a UTC timestamp!
-                                // To explicitly format it to Manila time:
                                 $dt = new \DateTime('@' . $timestamp);
                                 $dt->setTimezone(new \DateTimeZone('Asia/Manila'));
                                 $formatted = $dt->format('M j, Y - g:i A');
                             } elseif (!$is_all_day) {
-                                // It was provided without Z, so it is assumed to be local Manila time already!
-                                // But since Laravel is in UTC, strtotime parsed it as if the numbers were UTC.
-                                // We just format it directly since the face-value numbers are the Manila time.
                                 $formatted = date('M j, Y - g:i A', $timestamp);
                             } else {
                                 $formatted = date('M j, Y', $timestamp) . ' - All Day';
                             }
-                            
+
                             $events[] = [
                                 'summary' => $summary,
                                 'timestamp' => $timestamp,
-                                'date_formatted' => $formatted
+                                'date_formatted' => $formatted,
                             ];
                         }
                     }
                 }
             }
-            
-            usort($events, function($a, $b) { return $a['timestamp'] - $b['timestamp']; });
-            
+
+            usort($events, function ($a, $b) {
+                return $a['timestamp'] - $b['timestamp'];
+            });
+
             $now = strtotime('today');
             $currentMonth = date('Y-m');
-            $events = array_filter($events, function($e) use ($now, $currentMonth) {
-                if ($e['timestamp'] < $now) return false;
-                if (date('Y-m', $e['timestamp']) !== $currentMonth) return false;
+            $events = array_filter($events, function ($e) use ($now, $currentMonth) {
+                if ($e['timestamp'] < $now) {
+                    return false;
+                }
+                if (date('Y-m', $e['timestamp']) !== $currentMonth) {
+                    return false;
+                }
                 return true;
             });
-            
+
             $events = array_slice($events, 0, 30);
 
             $html = '<!DOCTYPE html><html><head>';
@@ -160,17 +203,16 @@ class TvController extends Controller
             </style>';
             $html .= '</head><body>';
             $html .= '<div class="header-title">PMC Calendar of Activities</div>';
-            
+
             if (empty($events)) {
                 $html .= '<div style="text-align:center;color:#6b7280;margin-top:2.5rem;width:100%;">No upcoming events found.</div>';
-            } else if (count($events) < 2) {
-                // Not enough events to carousel
+            } elseif (count($events) < 2) {
                 $html .= '<div class="carousel-container"><div class="carousel-wrapper" style="justify-content: center;">';
                 foreach ($events as $e) {
                     $html .= '<div class="carousel-slide">';
                     $html .= '<div class="event-card">';
-                    $html .= '<div class="card-date">'. $e['date_formatted'] .'</div>';
-                    $html .= '<div class="card-title">'. htmlspecialchars($e['summary']) .'</div>';
+                    $html .= '<div class="card-date">' . htmlspecialchars($e['date_formatted'], ENT_QUOTES, 'UTF-8') . '</div>';
+                    $html .= '<div class="card-title">' . htmlspecialchars($e['summary'], ENT_QUOTES, 'UTF-8') . '</div>';
                     $html .= '</div></div>';
                 }
                 $html .= '</div></div>';
@@ -179,12 +221,12 @@ class TvController extends Controller
                 foreach ($events as $e) {
                     $html .= '<div class="carousel-slide">';
                     $html .= '<div class="event-card">';
-                    $html .= '<div class="card-date">'. $e['date_formatted'] .'</div>';
-                    $html .= '<div class="card-title">'. htmlspecialchars($e['summary']) .'</div>';
+                    $html .= '<div class="card-date">' . htmlspecialchars($e['date_formatted'], ENT_QUOTES, 'UTF-8') . '</div>';
+                    $html .= '<div class="card-title">' . htmlspecialchars($e['summary'], ENT_QUOTES, 'UTF-8') . '</div>';
                     $html .= '</div></div>';
                 }
                 $html .= '</div></div>';
-                
+
                 $html .= '<script>
                     var wrapper = document.getElementById("wrapper");
                     if (wrapper && wrapper.children.length > 2) {
@@ -192,22 +234,23 @@ class TvController extends Controller
                             var firstSlide = wrapper.firstElementChild;
                             firstSlide.style.transition = "margin-left 1.8s ease-in-out";
                             firstSlide.style.marginLeft = "-50%";
-                            
+
                             setTimeout(function() {
                                 firstSlide.style.transition = "none";
                                 firstSlide.style.marginLeft = "0";
                                 wrapper.appendChild(firstSlide);
                             }, 1800);
-                        }, 5300); // 3.5s pause + 1.8s transition
+                        }, 5300);
                     }
                 </script>';
             }
-            
+
             $html .= '</body></html>';
-            
+
             return response($html)->header('Content-Type', 'text/html');
-        } catch (\Exception $e) {
-            return response('Error fetching calendar: ' . $e->getMessage(), 500);
+        } catch (\Throwable $e) {
+            Log::error('Error fetching calendar feed', ['tv_id' => $tvId, 'error' => $e->getMessage()]);
+            return response('Error fetching calendar.', 500);
         }
     }
 }
