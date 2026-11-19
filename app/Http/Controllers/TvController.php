@@ -191,23 +191,14 @@ class TvController extends Controller
             $events = array_slice($events, 0, 30);
 
             $html = '<!DOCTYPE html><html><head>';
-            $html .= '<style>
-                body { margin: 0; background: #f4f6f8; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0; box-sizing: border-box; }
-                .header-title { text-align: center; font-weight: 900; font-size: 1.95vw; color: #4c1d95; padding: 0; margin-bottom: 0.5vw; flex-shrink: 0; background: transparent; text-transform: uppercase; text-shadow: 0 0 6px rgba(76, 29, 149, 0.5), 0 0 14px rgba(76, 29, 149, 0.4); }
-                .carousel-container { width: 100%; overflow: hidden; display: flex; align-items: center; padding: 0; margin-top: 0; flex-shrink: 0; }
-                .carousel-wrapper { display: flex; flex-wrap: nowrap; width: 100%; align-items: center; }
-                .carousel-slide { flex: 0 0 50%; max-width: 50%; box-sizing: border-box; padding: 0 1vw; }
-                .event-card { width: 100%; background: #ffffff; border-left: 0.4vw solid #16a34a; border-radius: 0.4vw; padding: 1.2vw 1.5vw; box-shadow: 0 0.2vw 0.5vw rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
-                .card-date { font-size: 1vw; color: #0f766e; font-weight: 700; margin-bottom: 0.3vw; }
-                .card-title { font-size: 1.4vw; color: #111827; font-weight: 500; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-            </style>';
+            $html .= '<link rel="stylesheet" href="/assets/calendar-carousel.css?v=1" />';
             $html .= '</head><body>';
             $html .= '<div class="header-title">PMC Calendar of Activities</div>';
 
             if (empty($events)) {
-                $html .= '<div style="text-align:center;color:#6b7280;margin-top:2.5rem;width:100%;">No upcoming events found.</div>';
+                $html .= '<div class="calendar-empty">No upcoming events found.</div>';
             } elseif (count($events) < 2) {
-                $html .= '<div class="carousel-container"><div class="carousel-wrapper" style="justify-content: center;">';
+                $html .= '<div class="carousel-container"><div class="carousel-wrapper carousel-wrapper-centered">';
                 foreach ($events as $e) {
                     $html .= '<div class="carousel-slide">';
                     $html .= '<div class="event-card">';
@@ -227,22 +218,7 @@ class TvController extends Controller
                 }
                 $html .= '</div></div>';
 
-                $html .= '<script>
-                    var wrapper = document.getElementById("wrapper");
-                    if (wrapper && wrapper.children.length > 2) {
-                        setInterval(function() {
-                            var firstSlide = wrapper.firstElementChild;
-                            firstSlide.style.transition = "margin-left 1.8s ease-in-out";
-                            firstSlide.style.marginLeft = "-50%";
-
-                            setTimeout(function() {
-                                firstSlide.style.transition = "none";
-                                firstSlide.style.marginLeft = "0";
-                                wrapper.appendChild(firstSlide);
-                            }, 1800);
-                        }, 5300);
-                    }
-                </script>';
+                $html .= '<script src="/assets/calendar-carousel.js?v=1"></script>';
             }
 
             $html .= '</body></html>';

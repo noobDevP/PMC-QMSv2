@@ -17,7 +17,7 @@ DirectoryIndex index.php index.html
     Header always set X-Frame-Options "SAMEORIGIN"
 
     Header unset Content-Security-Policy
-    Header always set Content-Security-Policy "frame-ancestors 'self'; upgrade-insecure-requests"
+    Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; script-src 'self' https://connect.facebook.net https://js.pusher.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https://www.facebook.com https://i.ytimg.com; media-src 'self'; connect-src 'self' wss://ws-ap1.pusher.com https://sockjs-ap1.pusher.com https://sockjs.pusher.com https://stats.pusher.com https://connect.facebook.net https://www.facebook.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.facebook.com https://web.facebook.com https://calendar.google.com; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests"
 
     Header unset X-Content-Type-Options
     Header always set X-Content-Type-Options "nosniff"
