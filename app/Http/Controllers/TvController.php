@@ -148,7 +148,6 @@ class TvController extends Controller
             $events = array_slice($events, 0, 30);
 
             $html = '<!DOCTYPE html><html><head>';
-            $html .= '<script src="https://cdn.tailwindcss.com"></script>';
             $html .= '<style>
                 body { margin: 0; background: #f4f6f8; font-family: sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0; box-sizing: border-box; }
                 .header-title { text-align: center; font-weight: 900; font-size: 1.95vw; color: #4c1d95; padding: 0; margin-bottom: 0.5vw; flex-shrink: 0; background: transparent; text-transform: uppercase; text-shadow: 0 0 6px rgba(76, 29, 149, 0.5), 0 0 14px rgba(76, 29, 149, 0.4); }
@@ -163,7 +162,7 @@ class TvController extends Controller
             $html .= '<div class="header-title">PMC Calendar of Activities</div>';
             
             if (empty($events)) {
-                $html .= '<div class="text-center text-gray-500 mt-10 w-full">No upcoming events found.</div>';
+                $html .= '<div style="text-align:center;color:#6b7280;margin-top:2.5rem;width:100%;">No upcoming events found.</div>';
             } else if (count($events) < 2) {
                 // Not enough events to carousel
                 $html .= '<div class="carousel-container"><div class="carousel-wrapper" style="justify-content: center;">';

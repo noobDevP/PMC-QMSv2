@@ -1,5 +1,9 @@
 <?php
 
+if (function_exists('header_remove')) {
+    @header_remove('X-Powered-By');
+}
+
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 

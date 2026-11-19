@@ -12,6 +12,12 @@ class User extends Authenticatable
     
     protected $guarded = [];
 
+    protected $hidden = [
+        'password_hash',
+        'password',
+        'remember_token',
+    ];
+
     public function division()
     {
         return $this->belongsTo(Division::class);

@@ -1,5 +1,59 @@
+Options -Indexes
+
+<IfModule mod_expires.c>
+    ExpiresActive Off
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header unset X-Powered-By
+    Header always unset X-Powered-By
+    Header unset Access-Control-Allow-Origin
+    Header always unset Access-Control-Allow-Origin
+    Header unset Access-Control-Allow-Methods
+    Header always unset Access-Control-Allow-Methods
+
+    Header unset X-Frame-Options
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    Header unset Content-Security-Policy
+    Header always set Content-Security-Policy "frame-ancestors 'self'; upgrade-insecure-requests"
+
+    Header unset X-Content-Type-Options
+    Header always set X-Content-Type-Options "nosniff"
+
+    Header unset Referrer-Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    Header unset Permissions-Policy
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+    Header unset Strict-Transport-Security
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+    Header unset Cache-Control
+    Header always set Cache-Control "no-cache, no-store, must-revalidate, private"
+
+    Header unset Pragma
+    Header always set Pragma "no-cache"
+
+    Header unset Expires
+    Header always set Expires "0"
+</IfModule>
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Block direct external access to /public and internal Laravel directories or dotfiles
+    RewriteCond %{THE_REQUEST} \s/+public(/|\s|\?|$) [NC]
+    RewriteRule ^ - [R=404,L]
+
+    RewriteRule ^(\.|app|bootstrap|config|database|resources|routes|storage|tests|vendor)(/|$) - [R=404,L,NC]
+    RewriteRule ^(composer\.(json|lock)|artisan|phpunit\.xml|package\.json|package-lock\.json|vite\.config\..*|README\.md)$ - [R=404,L,NC]
+
+    # Block bare directory requests to /assets and /uploads so LiteSpeed DirectorySlash never emits a 795B 301 leaking /public/...
+    RewriteRule ^(assets|uploads)/?$ - [R=404,L,NC]
+
+    # Route everything else internally into public/
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>

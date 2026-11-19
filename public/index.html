@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PMC QMS</title>
     <script>
-      // Socket.io to Laravel Echo adapter
       window.io = function(url) {
         console.log('Socket.io Adapter: Intercepted connection to', url);
         const mockSocket = {
@@ -31,17 +30,16 @@
         };
         return mockSocket;
       };
-      // Define a global socket to fix undeclared socket ReferenceError in Teller dashboard
       window.socket = window.io('global');
     </script>
-    <script type="module" crossorigin src="/assets/index-QMSV2FB.js?v=153"></script>
+    <script type="module" crossorigin src="/assets/index-QMSV2FB.js?v=154"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-QMSV2FB.css?v=46">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css?v=1787535013" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-      /* --- Design Tokens --- */
+      
       :root {
         --bg-page: linear-gradient(145deg, #f6f9fc 0%, #e9f0f5 100%);
         --bg-card: rgba(255, 255, 255, 0.5);
@@ -60,13 +58,13 @@
         --font-base: 'Inter', sans-serif;
       }
 
-      /* --- Reset & Base --- */
+      
       .login-container ::selection {
         background: #b3cddf;
         color: #0f212f;
       }
 
-      /* --- Layout & Card --- */
+      
       .login-container {
         font-family: var(--font-base);
         min-height: 100vh;
@@ -91,7 +89,7 @@
         transition: padding 0.3s ease;
       }
 
-      /* --- Branding --- */
+      
       .brand {
         display: flex;
         align-items: center;
@@ -123,7 +121,7 @@
         color: #2b4b62;
       }
 
-      /* --- Form Elements --- */
+      
       .form-group {
         margin-bottom: 1.5rem;
       }
@@ -181,7 +179,7 @@
         font-weight: 300;
       }
 
-      /* --- Button --- */
+      
       .login-btn {
         width: 100%;
         background: var(--btn-primary);
@@ -213,7 +211,7 @@
         transform: scale(0.98);
       }
 
-      /* --- Footer --- */
+      
       .footer-note {
         margin-top: 2.5rem;
         font-size: 0.75rem;
@@ -229,7 +227,7 @@
         gap: 6px;
       }
 
-      /* --- Responsive --- */
+      
       @media (max-width: 500px) {
         .login-wrapper {
           padding: 2rem 1.5rem;
@@ -244,7 +242,7 @@
         }
       }
 
-      /* --- Admin & Teller Glassmorphism Overrides --- */
+      
       body.glass-mode {
         background: var(--bg-page) !important;
         font-family: var(--font-base);
@@ -262,7 +260,7 @@
         box-shadow: var(--shadow-soft) !important;
         transition: all 0.3s ease;
       }
-      /* Optional: Make inputs glassmorphic too */
+      
       .glass-mode input, .glass-mode select {
         background: var(--bg-input) !important;
         border-radius: 12px !important;
@@ -273,7 +271,7 @@
         border-color: #a0bccf !important;
         box-shadow: 0 8px 18px -8px rgba(30, 60, 90, 0.08) !important;
       }
-      /* Optional: Make primary buttons match the login button */
+      
       .glass-mode .bg-blue-600, .glass-mode .bg-blue-500, .glass-mode .bg-green-600, .glass-mode .bg-indigo-600 {
         background: var(--btn-primary) !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -287,7 +285,6 @@
       }
     </style>
     <script>
-      // Automatically apply glass-mode to body if on Admin or Teller routes
       setInterval(() => {
         if (window.location.pathname.includes('/admin') || window.location.pathname.includes('/teller')) {
           document.body.classList.add('glass-mode');
@@ -300,9 +297,9 @@
 
 
     <style>
-      /* --- TV Viewer Responsive --- */
+      
       @media (max-width: 1400px) {
-        /* Header bar */
+        
         [class*="w-screen"][class*="h-screen"] [class*="h-[72px]"] {
           height: 50px !important;
           padding-left: 1rem !important;
@@ -316,23 +313,23 @@
           width: 2rem !important;
           margin-right: 0.75rem !important;
         }
-        /* Section headings */
+        
         [class*="w-screen"][class*="h-screen"] .text-4xl {
           font-size: 1.5rem !important;
         }
         [class*="w-screen"][class*="h-screen"] .text-3xl {
           font-size: 1.2rem !important;
         }
-        /* Ticket cards - large (index 0) */
+        
         [class*="w-screen"][class*="h-screen"] .text-5xl,
         [class*="w-screen"][class*="h-screen"] .md\\:text-5xl {
           font-size: 2rem !important;
         }
-        /* Ticket cards - small */
+        
         [class*="w-screen"][class*="h-screen"] .text-2xl {
           font-size: 1.1rem !important;
         }
-        /* Padding reductions */
+        
         [class*="w-screen"][class*="h-screen"] .p-6 {
           padding: 0.75rem !important;
         }
@@ -345,7 +342,7 @@
         [class*="w-screen"][class*="h-screen"] .mb-8 {
           margin-bottom: 0.75rem !important;
         }
-        /* Footer bar */
+        
         [class*="w-screen"][class*="h-screen"] [class*="shrink-0"][class*="border-gray-400"] {
           padding-top: 0.25rem !important;
           padding-bottom: 0.25rem !important;
@@ -388,11 +385,11 @@
     </style>
 
     <style>
-      /* --- Missing Tailwind Utilities --- */
+      
       .flex-row-reverse { flex-direction: row-reverse !important; }
       .flex-col-reverse { flex-direction: column-reverse !important; }
 
-      /* --- Officer UI Styles --- */
+      
       .officer-modal-overlay {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px);
@@ -440,9 +437,6 @@
       }
     </style>
     <script>
-      
-
-      // Global function intercepted by React to ask for serving officer
       window.openOfficerModal = function(ticketId, tellerId, divisionId, refreshQueueFn, axiosInst, apiUrl) {
         const overlay = document.createElement('div');
         overlay.className = 'officer-modal-overlay';
@@ -475,17 +469,28 @@
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
         
-        // Fetch Officers
         axiosInst.get(`${apiUrl}/officers`).then(res => {
           officers = res.data;
           const select = document.getElementById('officer-select');
-          select.innerHTML = '<option value="">-- Select Personnel --</option>';
+          select.textContent = '';
+          const defaultOpt = document.createElement('option');
+          defaultOpt.value = '';
+          defaultOpt.textContent = '-- Select Personnel --';
+          select.appendChild(defaultOpt);
           officers.forEach(o => {
-            select.innerHTML += `<option value="${o.name}">${o.name}</option>`;
+            const opt = document.createElement('option');
+            opt.value = o.name;
+            opt.textContent = o.name;
+            select.appendChild(opt);
           });
           validateBtn();
         }).catch(err => {
-          document.getElementById('officer-select').innerHTML = '<option value="">Error loading</option>';
+          const select = document.getElementById('officer-select');
+          select.textContent = '';
+          const errOpt = document.createElement('option');
+          errOpt.value = '';
+          errOpt.textContent = 'Error loading';
+          select.appendChild(errOpt);
         });
         
         const validateBtn = () => {
@@ -514,7 +519,6 @@
 
         document.getElementById('officer-select').onchange = validateBtn;
         document.getElementById('officer-input').onkeyup = validateBtn;
-        // Initial check
         setTimeout(validateBtn, 100);
         
         document.getElementById('cancel-serve').onclick = () => overlay.remove();
@@ -542,7 +546,6 @@
         };
       };
 
-      // Function to open Manage Personnel Modal
       function openManageOfficersModal() {
         const overlay = document.createElement('div');
         overlay.className = 'officer-modal-overlay';
@@ -567,7 +570,6 @@
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
         
-        // Simple fetch using localStorage token
         const user = JSON.parse(localStorage.getItem('user'));
         const token = user ? user.token : '';
         const apiUrl = window.location.origin + '/api';
@@ -579,12 +581,22 @@
           .then(r => r.json())
           .then(data => {
             const list = document.getElementById('officer-list');
-            list.innerHTML = '';
-            if (data.length === 0) list.innerHTML = '<div style="text-align:center; color:#666; font-size:0.9rem;">No personnel added.</div>';
+            list.textContent = '';
+            if (data.length === 0) {
+              const emptyMsg = document.createElement('div');
+              emptyMsg.style.cssText = 'text-align:center; color:#666; font-size:0.9rem;';
+              emptyMsg.textContent = 'No personnel added.';
+              list.appendChild(emptyMsg);
+            }
             data.forEach(o => {
               const div = document.createElement('div');
               div.className = 'officer-list-item';
-              div.innerHTML = `<span>${o.name}</span> <button onclick="deleteOfficer(${o.id})">Delete</button>`;
+              const span = document.createElement('span');
+              span.textContent = o.name;
+              const btn = document.createElement('button');
+              btn.textContent = 'Delete';
+              btn.addEventListener('click', () => window.deleteOfficer(o.id));
+              div.append(span, btn);
               list.appendChild(div);
             });
           });
@@ -621,12 +633,6 @@
 
   
     <script>
-              // Media muting for TTS
-        window._wasVideoMuted = false;
-        window._activeFbPlayer = null;
-        window._isMutedByTTS = false;
-
-                        // --- BULLETPROOF MEDIA CONTROLLER ---
         window._wasVideoMuted = false;
         window._activeFbPlayer = null;
         window._isMutedByTTS = false;
@@ -640,30 +646,41 @@
           FB.Event.subscribe('xfbml.ready', function(msg) {
             if (msg.type === 'video') {
               window._activeFbPlayer = msg.instance;
-              // If it spawns while we are supposed to be muted, aggressively mute it
               if (window._isMutedByTTS || window._isMutedByFullScreen) {
                 setTimeout(() => { if (window._activeFbPlayer) window._activeFbPlayer.mute(); }, 500);
               }
             }
           });
+          setTimeout(() => { if (window.FB && window.FB.XFBML) window.FB.XFBML.parse(); }, 500);
         };
 
-        // Master function to execute mutes across all possible players
+        window.loadFacebookSdk = function() {
+          if (window.FB) {
+            setTimeout(() => { if (window.FB && window.FB.XFBML) window.FB.XFBML.parse(); }, 500);
+            return;
+          }
+          if (document.getElementById('facebook-jssdk')) return;
+          const js = document.createElement('script');
+          js.id = 'facebook-jssdk';
+          js.async = true;
+          js.defer = true;
+          js.crossOrigin = 'anonymous';
+          js.src = 'https:' + '/\x2fconnect.facebook.net/en_US/sdk.js';
+          document.head.appendChild(js);
+        };
+
         const executeMute = (mute) => {
             try {
-                // 1. YouTube
                 let iframe = document.querySelector('iframe');
                 if (iframe && !iframe.src.includes('facebook.com')) {
                     iframe.contentWindow.postMessage(JSON.stringify({event:'command',func: mute ? 'mute' : 'unMute',args:[]}), '*');
                 }
                 
-                // 2. Facebook (via SDK)
                 if (window._activeFbPlayer) {
                     if (mute) window._activeFbPlayer.mute();
                     else window._activeFbPlayer.unmute();
                 }
 
-                // 3. Local Uploaded Ads
                 let video = document.querySelector('video');
                 if (video) {
                     if (mute) {
@@ -683,7 +700,6 @@
         
         window.unmuteMedia = () => {
           window._isMutedByTTS = false;
-          // Don't unmute if we are still in Queue Full Screen
           if (!window._isMutedByFullScreen) {
              executeMute(false);
           }
@@ -696,7 +712,6 @@
 
         window.unmuteFullScreen = () => {
             window._isMutedByFullScreen = false;
-            // Don't unmute if TTS is currently talking
             if (!window._isMutedByTTS) {
                 executeMute(false);
             }
@@ -706,9 +721,9 @@
     </script>
 
     <style>
-      /* --- Kiosk Mobile Responsive --- */
+      
       @media (max-width: 768px) {
-        /* Idle screen */
+        
         [class*="min-h-screen"][class*="cursor-pointer"] .text-7xl {
           font-size: 2.5rem !important;
         }
@@ -726,7 +741,7 @@
           padding: 1rem !important;
         }
 
-        /* Form screen */
+        
         [class*="min-h-screen"][class*="p-8"][class*="flex-col"] {
           padding: 1rem !important;
         }
@@ -772,7 +787,7 @@
           margin-bottom: 0.5rem !important;
         }
 
-        /* Personnel type grid: 3 cols still but smaller */
+        
         [class*="min-h-screen"] .grid-cols-3 {
           grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
           gap: 0.5rem !important;
@@ -787,18 +802,18 @@
           letter-spacing: 0 !important;
         }
 
-        /* Get Ticket button */
+        
         [class*="min-h-screen"] .text-2xl.tracking-widest {
           font-size: 1.1rem !important;
         }
 
-        /* Purpose modal fullscreen */
+        
         [class*="min-h-screen"] .max-w-7xl {
           max-width: 100% !important;
           border-radius: 0 !important;
         }
 
-        /* Ticket confirmation screen */
+        
         [class*="min-h-screen"][class*="bg-blue-600"] .text-6xl {
           font-size: 3rem !important;
         }
@@ -821,7 +836,6 @@
     </style>
 
     <script>
-      // Hide partially shown tickets in TV viewer
       (function() {
         let observer = null;
         
@@ -831,8 +845,6 @@
           if (!observer) {
             observer = new IntersectionObserver((entries) => {
               entries.forEach(entry => {
-                // If the ticket is not fully visible, hide it using opacity so it still takes up space
-                // and can be observed accurately.
                 if (entry.intersectionRatio < 0.99) {
                   entry.target.style.opacity = '0';
                 } else {
@@ -845,7 +857,6 @@
             });
           }
 
-          // Find all tickets and observe them
           const tickets = document.querySelectorAll('.rounded-xl, .relative.rounded-lg');
           tickets.forEach(t => {
             if (!t.dataset.observed) {
@@ -885,12 +896,8 @@
     </script>
 
     <script>
-      // Global bridge for native Android TV App
       window.onNativeTtsEnd = () => {
           if (window.unmuteMedia) window.unmuteMedia();
-          // We don't have direct access to E.current from here easily, but the watchdog or the callback 
-          // can be dispatched as a custom event.
-          // Wait, E.current is local to the React component! 
           window.dispatchEvent(new Event('nativeTtsEnd'));
       };
       window.onNativeTtsError = () => {
@@ -898,7 +905,6 @@
           window.dispatchEvent(new Event('nativeTtsEnd'));
       };
     </script>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
   </head>
   <body>
     <div id="root"></div>
